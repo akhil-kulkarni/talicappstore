@@ -5,6 +5,7 @@ var multer = require("multer");
 var busboy = require('connect-busboy'); //middleware for form/file upload
 var path = require('path');     //used for file path
 var fs = require('fs-extra');       //File System - for file manipulation
+var mime = require('mime');
 
 var app = express();
 
@@ -27,8 +28,8 @@ app.post('/test', function(req, res) {
 	req.busboy.on('file', function (fieldname, file, filename) {
 		console.log("Uploading: " + filename);
 
-		var uploadRoot = "/uploads";
-		var uploadPath = "/garbage";
+		var uploadsFolderName = "public/uploads";
+		var uploadsSubFolderName = "public/uploads/garbage";
 
 		var fname = "";
 		var fext = "";
@@ -51,27 +52,26 @@ app.post('/test', function(req, res) {
 
 
 		if(!!fext && (fext=="apk" || fext=="ipa"))
-			uploadPath = uploadRoot + "/" + fext;
-
+			uploadsSubFolderName = uploadsFolderName + "/" + fext;
 
 		if (!fs.existsSync("uploads")){
-			fs.mkdirSync("uploads");
+			fs.rmrf("uploads", function (err) {
+				if (err) {
+					console.error(err);
+				}
+			});
 		}
 
-		if (!fs.existsSync("uploads/apk")){
-			fs.mkdirSync("uploads/apk");
+		if (!fs.existsSync(uploadsFolderName)){
+			fs.mkdirSync(uploadsFolderName);
 		}
 
-		if (!fs.existsSync("uploads/ipa")){
-			fs.mkdirSync("uploads/ipa");
-		}
-
-		if (!fs.existsSync("uploads/garbage")){
-			fs.mkdirSync("uploads/garbage");
+		if (!fs.existsSync(uploadsSubFolderName)){
+			fs.mkdirSync(uploadsSubFolderName);
 		}
 
 		//Path where apk/ipa will be uploaded
-		fstream = fs.createWriteStream(__dirname + uploadPath + "/" + filename);
+		fstream = fs.createWriteStream(__dirname + "/" + uploadsSubFolderName + "/" + filename);
 		file.pipe(fstream);
 		fstream.on('close', function () {
 			console.log("Upload Finished of " + filename);
@@ -79,6 +79,19 @@ app.post('/test', function(req, res) {
 		});
 	});
 	console.log("received a hit");
+});
+
+app.get("/download", function(req, res){
+	var file = __dirname + '/public/uploads/apk/GoodConnect.apk';
+	if(!!file){
+		var filename = path.basename(file);
+		var mimetype = mime.lookup(file);
+		console.log("mimetype: " + mimetype);
+		res.setHeader('Content-disposition', 'attachment; filename=' + filename);
+		res.setHeader('Content-type', mimetype);
+		var filestream = fs.createReadStream(file);
+		filestream.pipe(res);
+	}
 });
 
 app.listen(app.get('port'), function() {
