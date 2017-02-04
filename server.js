@@ -54,8 +54,8 @@ app.post('/test', function(req, res) {
 		if(!!fext && (fext=="apk" || fext=="ipa"))
 			uploadsSubFolderName = uploadsFolderName + "/" + fext;
 
-		if (!fs.existsSync("uploads")){
-			fs.rmrf("uploads", function (err) {
+		if (fs.existsSync("uploads")){
+			fs.remove("uploads", function (err) {
 				if (err) {
 					console.error(err);
 				}
