@@ -8,7 +8,7 @@ var fs = require('fs-extra');       //File System - for file manipulation
 
 var app = express();
 
-app.set('port', (process.env.PORT || 80));
+app.set('port', (process.env.PORT || 8080));
 app.use(busboy());
 app.use(express.static(__dirname + '/public'));
 
