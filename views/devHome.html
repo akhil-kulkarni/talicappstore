@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+		<title>Talic App Store</title>
+
+		<!-- Bootstrap -->
+		<link href="css/bootstrap.css" rel="stylesheet">
+		<link href="css/font-awesome.css" rel="stylesheet">
+		<link href="css/style.css" rel="stylesheet">
+
+		<style>
+			body {
+				background-color: #f4f4f3;
+			}
+			.row {
+				display: -webkit-flex;
+				display: -ms-flexbox;
+				display: flex;
+				-webkit-flex-wrap: wrap;
+				-ms-flex-wrap: wrap;
+				flex-wrap: wrap;
+			}
+			.row .col-lg-6, .row .col-md-6, .row .col-sm-6 {
+				display: -webkit-flex;
+				display: -ms-flexbox;
+				display: flex;
+				-webkit-flex: 1 auto;
+				-ms-flex: 1 auto;
+				flex: 1 auto;
+			}
+			.product-wrap {
+				width: 100%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="top-head">
+			<h4 class="text-center">Welcome to TATA AIA Life Insurance</h4>
+		</div>
+		<div class="container">
+			<div class="products">
+				<div>
+					<form method="POST" enctype="multipart/form-data" action="/test">
+						<input type="file" name="fileTest" accept=".ipa, .apk"/>
+						<input type="submit" value="Submit"/>
+					</form>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
