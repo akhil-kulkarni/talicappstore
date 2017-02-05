@@ -15,7 +15,9 @@ var app = express();
 var MONGO_LOCAL = "mongodb://localhost/talicappstore";
 var MONGO_REMOTE = "mongodb://akhilkulkarni:Ik5nKvPs17@mongodb.cloudno.de:27017";
 
-mongoose.connect(MONGO_REMOTE);
+var config = require('./env.json')[process.env.NODE_ENV || 'development'];
+
+mongoose.connect(config.DBURI);
 
 mongoose.connection.on('error', function (err) {
 	console.log("connection failed: " + err);
