@@ -3,6 +3,12 @@ $(function () {
 		dataType: 'json',
 		replacefileinput: true,
 		add: function (e, data) {
+			$('#cancelUpload').click(
+				function(){
+					data.abort();
+					$("#cancelUpload").off("click");
+				}
+			);
 			data.context = $('#uploadBtn').click(
 				function(){
 					data.submit();
