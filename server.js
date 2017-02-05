@@ -14,6 +14,8 @@ var app = express();
 
 var config = require('./env.json')[process.env.NODE_ENV || 'development'];
 
+console.log("mongodb: " + config.mongodb);
+
 mongoose.connect(config.mongodb);
 
 mongoose.connection.on('error', function (err) {
