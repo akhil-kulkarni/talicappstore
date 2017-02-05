@@ -1,10 +1,12 @@
 $(function () {
 	$('#selectFile').fileupload({
 		dataType: 'json',
+		replacefileinput: true,
 		add: function (e, data) {
 			data.context = $('#uploadBtn').click(
 				function(){
 					data.submit();
+					$("#uploadBtn").off("click");
 				}
 			);
 		},
@@ -48,6 +50,7 @@ $(document).on('click', '#cancelUpload', function(){
 });
 
 $(document).on('change', '#selectFile', function(e){
+	console.log("e.target.files.length: " + JSON.stringify(e.target.files));
 	var selectedFile = e.target.files[0];
 	$('#fileName').text(selectedFile.name);
 	var fileSize = getFileSize({"size": selectedFile.size, "unit": "bytes"});
