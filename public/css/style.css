@@ -106,8 +106,14 @@ body{background-color: #f4f4f3;}
 	align-items: center;*/
 }
 
+.progress-bar{
+	color: #1a2c44;
+	font-weight: bold;
+}
+
 .uploadFile {
 	display: none;
+	color: #1a2c44;
 	/*justify-content: space-between;
 	align-items: center;*/
 }

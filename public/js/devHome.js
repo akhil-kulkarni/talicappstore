@@ -21,15 +21,12 @@ $(function () {
 			$('.progress-bar').css('width', (progress + '%'));
 			$('.progress-bar').text((progress + '%'));
 		},
-		abort: function(e, data){
-			$('.progress-bar').text("Abort!");
-		},
 		done: function (e, data) {
 			$('.progress-bar').text("Uploaded Successfully!");
 		},
 		fail: function (e, data) {
 			console.log(data);
-			$('.progress-bar').text("Uploaded Failed!");
+			$('.progress-bar').text("Upload Failed!");
 		}
 	});
 });
