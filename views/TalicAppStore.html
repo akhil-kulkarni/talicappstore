@@ -9,15 +9,15 @@
 
 		<title>Talic App Store</title>
 
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<script type="text/javascript" src="js/TalicAppStore.js"></script>
+
 		<!-- Bootstrap -->
 		<link href="css/bootstrap.css" rel="stylesheet">
 		<link href="css/font-awesome.css" rel="stylesheet">
 		<link href="css/style.css" rel="stylesheet">
 
 		<style>
-			body {
-				background-color: #f4f4f3;
-			}
 			.row {
 				display: -webkit-flex;
 				display: -ms-flexbox;
@@ -41,9 +41,32 @@
 	</head>
 
 	<body>
-		<div class="top-head">
-			<h4 class="text-center">Welcome to TATA AIA Life Insurance</h4>
-		</div>
+		<form name="loginForm">
+			<div class="top-head">
+				<div class="top-head-h4-div">
+					<h4>Talic App Store</h4>
+				</div>
+				<div class="top-head-div">
+					<div class="loginAsDiv">
+						<h4>login as: </h4>
+					</div>
+					<div class="loginFormWrapper">
+						<div>
+							<select id="username" name="username">
+								<option value="dev">developer</option>
+								<option value="admin">admin</option>
+							</select>
+						</div>
+						<div>
+							<input id="password" name="password" type="password" placeholder="Password"/>
+						</div>
+						<div>
+							<input type="button" onclick="loginFormSubmit()" value="Submit"/>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
 		<div class="container">
 			<div class="products">
 				<div class="row">
@@ -63,142 +86,9 @@
 								<li>Money maxima enabled for GoodSolution users.</li>
 							</ol>
 							<div class="text-center">
-								<a class="btn btn-danger no-radius android-icon" href="https://lp.tataaia.com/GoodConnect.apk">
+								<a class="btn btn-danger no-radius android-icon" href="uploads/apk/GoodConnect.apk">
 									<i class="fa fa-android fa-lg"></i>
 									Download for Android
-								</a>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-sm-6 col-md-6 col-lg-6">
-						<div class="product-wrap">
-							<div class="img-circle center-block product-img glide">
-								<h3><span>Good Check</span></h3>
-							</div>
-							<p>Version No: 1.0.1</p>
-							<p>Release Date: 13 Jan 2017 </p>
-							<p>Release Note: Stand-alone login issue and app crash issue fixed.</p>
-
-							<div class="text-center">
-								<a class="btn btn-danger no-radius android-icon" href="https://lp.tataaia.com/GoodCheck.apk">
-									<i class="fa fa-android fa-lg"></i>
-									Download for Android
-								</a>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-sm-6 col-md-6 col-lg-6">
-						<div class="product-wrap">
-							<div class="img-circle center-block product-img lp">
-								<h3>iWealth</h3>
-							</div>
-							<p>iOS Version No: 1.1.7 </p>
-							<p>Release Date: 17 Jan 2017 </p>
-							<p>Release Note:</p>
-							<ol>
-								<li>SIP product blocked for DSF channel.</li>
-							</ol>
-							<div class="text-center">
-								<a class="btn btn-danger no-radius ios-icon" href="itms-services://?action=download-manifest&amp;url=https://lp.tataaia.com/iWealth.plist">
-									<i class="fa fa-apple fa-lg"></i>
-									Download for iOS
-								</a>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-sm-6 col-md-6 col-lg-6">
-						<div class="product-wrap">
-							<div class="img-circle center-block product-img lp">
-								<h3><span>Life</span><span>Planner</span></h3>
-							</div>
-							<p> Version No: 2.2.0</p>
-							<p> Release Date: 1 Feb 2017 </p>
-							<p> Release Note:</p>
-							<ol>
-								<li>SIP Blocked for Agency.</li>
-							</ol>
-							<div class="text-center">
-								<a class="btn btn-danger no-radius ios-icon" href="itms-services://?action=download-manifest&amp;url=https://lp.tataaia.com/manifest.plist">
-									<i class="fa fa-apple fa-lg"></i>
-									Download for iOS
-								</a>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-sm-6 col-md-6 col-lg-6">
-						<div class="product-wrap">
-							<div class="img-circle center-block product-img glide">
-								<h3><span>Good Recruit</span></h3>
-							</div>
-							<p>Version No: 1.0</p>
-							<p>Release Date: 30 Sep 2016 </p>
-							<p>Release Note : NAAF Digitalization.</p>
-							<div class="text-center">
-								<a class="btn btn-danger no-radius android-icon" href="https://lp.tataaia.com/GoodRecruit.apk">
-									<i class="fa fa-android fa-lg"></i>
-									Download for Android
-								</a>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-sm-6 col-md-6 col-lg-6">
-						<div class="product-wrap">
-							<div class="img-circle center-block product-img glide">
-								<h3><span>PRISM</span></h3>
-							</div>
-							<p>Version No: 2.0.0</p>
-							<p>Release Date: 27 Jan 2017 </p>
-							<p>Release Note:.</p>
-							<ol>
-								<li>DBS User access to PRISM application</li>
-								<li>Email Field optional while adding lead</li>
-								<li>Referral Lead auto suggest drop down based on Lead ID and Name</li>
-								<li>Worksite File Upload validation added in Admin Portal</li>
-								<li>Manual Date Entry</li>
-								<li>For add new lead, city auto suggest and state prepopulating based on city selection</li>
-								<li>Adding Central Zone for NH login</li>
-								<li>Current Production Fixes</li>
-							</ol>
-							<div class="text-center">
-								<a class="btn btn-danger no-radius android-icon" href="https://lp.tataaia.com/Prism.apk">
-									<i class="fa fa-android fa-lg"></i>
-									Download for Android
-								</a>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-sm-6 col-md-6 col-lg-6">
-						<div class="product-wrap">
-							<div class="img-circle center-block product-img glide">
-								<h3><span>Insight</span></h3>
-							</div>
-							<p>Android Version No: 1.5.0</p>
-							<p>iOS Version No: 1.1.0 </p>
-							<p>Android Release Date: 25 Jan 2016 </p>
-							<p>iOs Release Date: 25 Jan 2016 </p>
-							<p>Release Note: </p>
-							<ol>
-								<li>Dashboards - Operations</li>
-								<li>Perks - Disable the "View Perks" for Lower hierarchy</li>
-								<li>Employee search in User Hierarchy.</li>
-								<li>Leader Score card  addition of few sections.</li>
-								<li>NB MIS Report</li>
-								<li>CITI Goals Sheet</li>
-							</ol>
-							<div class="text-center">
-								<a class="btn btn-danger no-radius android-icon" href="https://lp.tataaia.com/InsightBIU.apk">
-									<i class="fa fa-android fa-lg"></i>
-									Download for Android
-								</a>
-								<a class="btn btn-danger no-radius ios-icon" href="itms-services://?action=download-manifest&amp;url=https://lp.tataaia.com/Insight-Info.plist">
-									<i class="fa fa-apple fa-lg"></i>
-									Download for iOS
 								</a>
 							</div>
 						</div>

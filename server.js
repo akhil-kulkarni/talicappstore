@@ -1,16 +1,34 @@
 var express = require("express");
 var mustacheExpress = require("mustache-express");
-var multer = require("multer");
+
+var mongoose = require('mongoose');
 
 var busboy = require('connect-busboy'); //middleware for form/file upload
-var path = require('path');     //used for file path
-var fs = require('fs-extra');       //File System - for file manipulation
+var path = require('path'); //used for file path
+var fs = require('fs-extra'); //File System - for file manipulation
 var mime = require('mime');
+
+var bodyParser = require("body-parser");
 
 var app = express();
 
+var MONGO_LOCAL = "mongodb://localhost/talicappstore";
+var MONGO_REMOTE = "mongodb://akhilkulkarni:Ik5nKvPs17@mongodb.cloudno.de:27017";
+
+mongoose.connect(MONGO_REMOTE);
+
+mongoose.connection.on('error', function (err) {
+	console.log("connection failed: " + err);
+});
+
+mongoose.connection.once('open', function (callback) {
+	console.log("connection works!!");
+});
+
 app.set('port', (process.env.app_port || 8081));
 app.use(busboy());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 
 app.engine('html', mustacheExpress());
@@ -19,17 +37,43 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'html');
 
 app.get('/', function(request, response) {
+	response.render('TalicAppStore.html');
+});
+
+app.get('/devHome', function(request, response) {
 	response.render('devHome.html');
 });
 
-app.post('/test', function(req, res) {
+app.post("/login", function(req, res){
+	console.log(JSON.stringify(req.body));
+	if(!!res && !!req.body && !!req.body.password && !!req.body.username){
+		console.log("req.body.username: " + req.body.username);
+		console.log("req.body.password: " + req.body.password);
+		if(req.body.username=="dev" && req.body.password=="Tata_001"){
+			res.json({error: false, render: "devHome"});
+		}
+		else if(req.body.username=="admin" && req.body.password=="_T@l!cSuck$_"){
+			res.json({error: false, render: "devHome"});
+		}
+		else{
+			console.log("invalid credentials!");
+			res.json({error: true, msg: "Invalid Credentials!"});
+		}
+	}
+	else{
+		console.log("something is undefined or null!");
+		res.json({error: true, msg: "something is undefined or null!"});
+	}
+});
+
+app.post('/upload', function(req, res) {
 	var fstream;
 	req.pipe(req.busboy);
 	req.busboy.on('file', function (fieldname, file, filename) {
 		console.log("Uploading: " + filename);
 
 		var uploadsFolderName = "public/uploads";
-		var uploadsSubFolderName = "public/uploads/garbage";
+		var uploadsSubFolderName = uploadsFolderName + "/garbage";
 
 		var fname = "";
 		var fext = "";
@@ -50,17 +94,8 @@ app.post('/test', function(req, res) {
 		console.log("fname: " + fname);
 		console.log("fext: " + fext);
 
-
 		if(!!fext && (fext=="apk" || fext=="ipa"))
 			uploadsSubFolderName = uploadsFolderName + "/" + fext;
-
-		if (fs.existsSync("uploads")){
-			fs.remove("uploads", function (err) {
-				if (err) {
-					console.error(err);
-				}
-			});
-		}
 
 		if (!fs.existsSync(uploadsFolderName)){
 			fs.mkdirSync(uploadsFolderName);
@@ -75,7 +110,7 @@ app.post('/test', function(req, res) {
 		file.pipe(fstream);
 		fstream.on('close', function () {
 			console.log("Upload Finished of " + filename);
-			res.redirect('back');           //where to go next
+			res.redirect('back'); //where to go next
 		});
 	});
 	console.log("received a hit");

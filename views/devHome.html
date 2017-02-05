@@ -9,47 +9,24 @@
 
 		<title>Talic App Store</title>
 
+		<script type="text/javascript" src="js/devHome.js"></script>
+
 		<!-- Bootstrap -->
 		<link href="css/bootstrap.css" rel="stylesheet">
 		<link href="css/font-awesome.css" rel="stylesheet">
 		<link href="css/style.css" rel="stylesheet">
-
-		<style>
-			body {
-				background-color: #f4f4f3;
-			}
-			.row {
-				display: -webkit-flex;
-				display: -ms-flexbox;
-				display: flex;
-				-webkit-flex-wrap: wrap;
-				-ms-flex-wrap: wrap;
-				flex-wrap: wrap;
-			}
-			.row .col-lg-6, .row .col-md-6, .row .col-sm-6 {
-				display: -webkit-flex;
-				display: -ms-flexbox;
-				display: flex;
-				-webkit-flex: 1 auto;
-				-ms-flex: 1 auto;
-				flex: 1 auto;
-			}
-			.product-wrap {
-				width: 100%;
-			}
-		</style>
 	</head>
 
 	<body>
 		<div class="top-head">
-			<h4 class="text-center">Welcome to TATA AIA Life Insurance</h4>
+			<h4 class="text-center">Developer's Homepage</h4>
 		</div>
 		<div class="container">
 			<div class="products">
 				<div>
-					<form method="POST" enctype="multipart/form-data" action="/test">
+					<form method="POST" enctype="multipart/form-data" action="/upload">
 						<input type="file" name="fileTest" accept=".ipa, .apk"/>
-						<input type="submit" value="Submit"/>
+						<input type="submit" value="Upload"/>
 					</form>
 					<form method="GET" enctype="multipart/form-data" action="/download">
 						<input type="submit" value="Download"/>
