@@ -9,28 +9,71 @@
 
 		<title>Talic App Store</title>
 
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+		<script src="js/jquery.ui.widget.js"></script>
+		<script src="js/jquery.fileupload.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
 		<script type="text/javascript" src="js/devHome.js"></script>
 
 		<!-- Bootstrap -->
-		<link href="css/bootstrap.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
 		<link href="css/font-awesome.css" rel="stylesheet">
+		<link href="css/jquery.fileupload.css" rel="stylesheet">
+		<link href="css/jquery.fileupload-ui.css" rel="stylesheet">
 		<link href="css/style.css" rel="stylesheet">
 	</head>
 
 	<body>
 		<div class="top-head">
-			<h4 class="text-center">Developer's Homepage</h4>
+			<h4 class="text-center">developer console</h4>
 		</div>
 		<div class="container">
 			<div class="products">
-				<div>
-					<form method="POST" enctype="multipart/form-data" action="/upload">
-						<input type="file" name="fileTest" accept=".ipa, .apk"/>
-						<input type="submit" value="Upload"/>
-					</form>
-					<form method="GET" enctype="multipart/form-data" action="/download">
-						<input type="submit" value="Download"/>
-					</form>
+				<div style="border: 1px solid #1a2c44; border-radius: 5px;">
+					<div style="padding: 10px;">
+						<div>
+							<div>
+								<div class="row">
+									<div class="col-xl-2 col-lg-2 col-md-4 col-sm-4 col-xs-6 col-flex">
+										<span class="btn btn-success fileinput-button">
+											<i class="glyphicon glyphicon-plus"></i>
+											<span>add  file</span>
+											<input type="file" name="fileTest" id="selectFile" data-url="/upload" accept=".ipa, .apk"/>
+										</span>
+									</div>
+									<div class="col-xl-2 col-lg-2 col-md-4 col-sm-4 col-xs-6 col-flex">
+										<button id="uploadBtn" type="submit" class="btn btn-primary start">
+											<i class="glyphicon glyphicon-upload"></i>
+											<span>start upload</span>
+										</button>
+									</div>
+									<div class="col-xl-2 col-lg-2 col-md-4 col-sm-4 col-xs-6 col-flex">
+										<button type="reset" class="btn btn-warning cancel">
+											<i class="glyphicon glyphicon-ban-circle"></i>
+											<span>cancel upload</span>
+										</button>
+									</div>
+									<div class="col-xl-2 col-lg-2 col-md-4 col-sm-4 col-xs-6 uploadFile">
+										<p id="fileName" class="name">File Name</p>
+										<strong class="error text-danger"></strong>
+									</div>
+									<div class="col-xl-2 col-lg-2 col-md-4 col-sm-4 col-xs-6 uploadFile">
+										<p id="fileSize" class="size">Processing...</p>
+									</div>
+									<div class="col-xl-2 col-lg-2 col-md-4 col-sm-4 col-xs-6 uploadFile">
+										<div class="progress">
+											<div class="progress-bar progress-bar-success progress-bar-striped active" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:0%;" role="progressbar"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div style="padding: 10px; display: none;">
+						<form method="GET" enctype="multipart/form-data" action="/download">
+							<input type="submit" value="Download"/>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>

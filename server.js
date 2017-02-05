@@ -111,7 +111,7 @@ app.post('/upload', function(req, res) {
 		file.pipe(fstream);
 		fstream.on('close', function () {
 			console.log("Upload Finished of " + filename);
-			res.redirect('back'); //where to go next
+			res.json({success: true}); //where to go next
 		});
 	});
 	console.log("received a hit");
