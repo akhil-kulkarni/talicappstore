@@ -8,23 +8,16 @@ var path = require('path'); //used for file path
 var fs = require('fs-extra'); //File System - for file manipulation
 var mime = require('mime');
 
+var crypto = require('crypto');
 var bodyParser = require("body-parser");
-
 var app = express();
 
-var config = require('./env.json')[process.env.NODE_ENV || 'development'];
+var commonFunctions = require('./common/commonFunctions.js');
+var loginModel = require('./models/login.js');
 
-console.log("mongodb: " + config.mongodb);
+var config = commonFunctions.config();
 
-mongoose.connect(config.mongodb);
-
-mongoose.connection.on('error', function (err) {
-	console.log("connection failed: " + err);
-});
-
-mongoose.connection.once('open', function (callback) {
-	console.log("connection works!!");
-});
+//loginModel.find().exec(function (err, docs) {console.log(JSON.stringify(docs));});
 
 app.set('port', (process.env.app_port || 8081));
 app.use(busboy());
@@ -46,19 +39,26 @@ app.get('/devHome', function(request, response) {
 });
 
 app.post("/login", function(req, res){
-	console.log(JSON.stringify(req.body));
 	if(!!res && !!req.body && !!req.body.password && !!req.body.username){
 		console.log("req.body.username: " + req.body.username);
-		console.log("req.body.password: " + req.body.password);
-		if(req.body.username=="dev" && req.body.password=="Tata_001"){
-			res.json({error: false, render: "devHome"});
-		}
-		else if(req.body.username=="admin" && req.body.password=="_T@l!cSuck$_"){
-			res.json({error: false, render: "devHome"});
+		if(req.body.username=="dev" || req.body.username=="admin"){
+			loginModel.count({"username": req.body.username, "password": req.body.password}).exec(
+				function(err, count){
+					if(err){
+						res.json({error: true, msg: "User does not exist!"});
+					}
+					if(count===1){
+						res.json({error: false, render: "devHome"});
+					}
+					else{
+						res.json({error: true, msg: "Invalid Credentials!"});
+					}
+				}
+			);
 		}
 		else{
 			console.log("invalid credentials!");
-			res.json({error: true, msg: "Invalid Credentials!"});
+			res.json({error: true, msg: "User does not exist!"});
 		}
 	}
 	else{

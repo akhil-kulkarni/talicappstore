@@ -9,8 +9,12 @@
 
 		<title>Talic App Store</title>
 
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-		<script type="text/javascript" src="js/TalicAppStore.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/core.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/sha256.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/hmac.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/pbkdf2.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+		<script src="js/TalicAppStore.js"></script>
 
 		<!-- Bootstrap -->
 		<link href="css/bootstrap.css" rel="stylesheet">
@@ -58,7 +62,7 @@
 							</select>
 						</div>
 						<div>
-							<input id="password" name="password" type="password" placeholder="Password"/>
+							<input id="password" name="password" type="password" value="Tata_001" placeholder="Password"/>
 						</div>
 						<div>
 							<input type="button" onclick="loginFormSubmit()" value="Submit"/>
