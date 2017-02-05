@@ -26,7 +26,7 @@ $(function () {
 		},
 		fail: function (e, data) {
 			console.log(data);
-			$('.progress-bar').text("Upload Failed!");
+			$('.progress-bar').text("Upload_Failed!");
 		}
 	});
 });
