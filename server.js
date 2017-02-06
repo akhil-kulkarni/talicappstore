@@ -14,6 +14,8 @@ var loginModel = require('./models/login.js');
 
 var config = commonFunctions.config();
 
+var time = require('time');
+
 //loginModel.find().exec(function (err, docs) {console.log(JSON.stringify(docs));});
 
 app.set('port', (process.env.app_port || 8081));
@@ -26,6 +28,11 @@ app.engine('html', mustacheExpress());
 // views is directory for all template files
 app.set('views', __dirname + '/views');
 app.set('view engine', 'html');
+
+var t = new time.Date();
+
+t.setTimezone('Asia/Kolkata');
+console.log("t.getDate(): " + t);
 
 app.get('/', function(request, response) {
 	response.render('TalicAppStore.html');
