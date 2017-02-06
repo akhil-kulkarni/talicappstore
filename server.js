@@ -34,7 +34,7 @@ app.set('view engine', 'html');
 //t.setTimezone('Asia/Kolkata');
 var tzDifference = (5.5) * 60 + (-330);
 var offsetTime = new Date(new Date().getTime() + tzDifference * 60 * 1000);
-console.log("t.getDate(): " + offsetTime);
+console.log("t.getDate(): " + new Date().toISOString());
 
 app.get('/', function(request, response) {
 	response.render('TalicAppStore.html');
@@ -54,7 +54,7 @@ app.post("/login", function(req, res){
 						res.json({error: true, msg: "User does not exist!"});
 					}
 					if(count===1){
-						res.json({error: false, render: "devHome"});
+						res.json({error: false, render: "devHome", "date": offsetTime});
 					}
 					else{
 						res.json({error: true, msg: "Invalid Credentials!"});
