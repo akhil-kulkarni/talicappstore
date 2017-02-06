@@ -32,7 +32,7 @@ app.set('view engine', 'html');
 var t = new time.Date();
 
 t.setTimezone('Asia/Kolkata');
-console.log("t.getDate(): " + t);
+console.log("t.getDate(): " + t + " " + t.getTimezone());
 
 app.get('/', function(request, response) {
 	response.render('TalicAppStore.html');
