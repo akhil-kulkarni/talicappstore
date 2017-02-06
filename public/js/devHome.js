@@ -9,8 +9,18 @@ $(function () {
 					$("#cancelUpload").off("click");
 				}
 			);
+			data.formData = {
+				"fileData": JSON.stringify({
+					"appVersionNumber": "1.3.4",
+					"changeLog": "so and so .... adfsf ... ",
+					"doNotDelete": false,
+					"password": null,
+					"isProduction": false
+				})
+			};
 			data.context = $('#uploadBtn').click(
 				function(){
+					console.log(data);
 					data.submit();
 					$("#uploadBtn").off("click");
 				}
@@ -23,10 +33,15 @@ $(function () {
 		},
 		done: function (e, data) {
 			$('.progress-bar').text("Uploaded Successfully!");
+			if(!data.result.success)
+				alert(data.result.msg || "could not upload the file!");
+			else
+				alert("File uploaded successfully!");
 		},
 		fail: function (e, data) {
-			console.log(data);
 			$('.progress-bar').text("Upload_Failed!");
+			$('.progress-bar').css('width', ('0%'));
+			alert("File upload failed!");
 		}
 	});
 });

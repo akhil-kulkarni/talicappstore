@@ -100,12 +100,6 @@ body{background-color: #f4f4f3;}
     .product-wrap a{font-size: 12px;}
 }
 
-.col-flex{
-	/*display: flex;
-	justify-content: space-between;
-	align-items: center;*/
-}
-
 .progress-bar{
 	color: #1a2c44;
 	font-weight: bold;
@@ -114,6 +108,4 @@ body{background-color: #f4f4f3;}
 .uploadFile {
 	display: none;
 	color: #1a2c44;
-	/*justify-content: space-between;
-	align-items: center;*/
 }

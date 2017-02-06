@@ -1,5 +1,9 @@
 var crypto = require('crypto');
+var constants = require('../constants.js');
 var env = require('../env.json');
+var path = require('path'); //used for file path
+var fs = require('fs-extra'); //File System - for file manipulation
+var mime = require('mime');
 var commonFunctions = {
 	getHashedPassword: function(username){
 		var salt = username + "|talicappstore";
@@ -13,11 +17,52 @@ var commonFunctions = {
 		return (hash.toString("hex") + "");
 	},
 	config: function(){
-		var node_env = process.env.NODE_ENV || 'development';
-		return env[node_env];
+		return env[process.env.NODE_ENV || 'development'];
 	},
-	validatePassword: function(reqUsername, reqPassword){
+	saveFile: function(file, filename, saveFileCallback){
+		var fname = "";
+		var fext = "";
+		if(!!filename){
+			var fileNameArr = filename.split(".");
+			if(fileNameArr.length>2){
+				for(var i=0;i<(fileNameArr.length-1);i++){
+					fname += fileNameArr[i] + ((i!=((fileNameArr.length-1)))?".":"");
+				}
+				fext = fileNameArr[(fileNameArr.length-1)];
+			}
+			else if(fileNameArr.length==2){
+				fname = fileNameArr[0];
+				fext = fileNameArr[1];
+			}
 
+			console.log("fname: " + fname);
+			console.log("fext: " + fext);
+
+			if(!!fext && (constants.allowedFileTypes.indexOf("_"+fext+"_")!==-1)){
+
+				if (!fs.existsSync(constants.uploadsFolderPath)){
+					fs.mkdirSync(constants.uploadsFolderPath);
+				}
+
+				if (!fs.existsSync(constants.uploadsFolderPath + "/" + fext)){
+					fs.mkdirSync(constants.uploadsFolderPath + "/" + fext);
+				}
+
+				//Path where apk/ipa will be uploaded
+				fstream = fs.createWriteStream(constants.uploadsFolderPath + "/" + fext + "/" + filename);
+				file.pipe(fstream);
+				fstream.on('close', function () {
+					console.log("Upload Finished of " + filename);
+					saveFileCallback({success: true}); //where to go next
+				});
+			}
+			else{
+				saveFileCallback({success: false, msg: "invalid file type!"}); //where to go next
+			}
+		}
+		else{
+			saveFileCallback({success: false, msg: "file not found!"}); //where to go next
+		}
 	}
 };
 

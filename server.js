@@ -4,14 +4,11 @@ var mustacheExpress = require("mustache-express");
 var mongoose = require('mongoose');
 
 var busboy = require('connect-busboy'); //middleware for form/file upload
-var path = require('path'); //used for file path
-var fs = require('fs-extra'); //File System - for file manipulation
-var mime = require('mime');
 
-var crypto = require('crypto');
 var bodyParser = require("body-parser");
 var app = express();
 
+var constants = require('./constants.js');
 var commonFunctions = require('./common/commonFunctions.js');
 var loginModel = require('./models/login.js');
 
@@ -69,52 +66,26 @@ app.post("/login", function(req, res){
 
 app.post('/upload', function(req, res) {
 	var fstream;
+	console.log("attempt made to upload file...");
+	var currTimestamp = null;
 	req.pipe(req.busboy);
 	req.busboy.on('file', function (fieldname, file, filename) {
 		console.log("Uploading: " + filename);
-
-		var uploadsFolderName = "public/uploads";
-		var uploadsSubFolderName = uploadsFolderName + "/garbage";
-
-		var fname = "";
-		var fext = "";
-		if(!!filename){
-			var fileNameArr = filename.split(".");
-			if(fileNameArr.length>2){
-				for(var i=0;i<(fileNameArr.length-1);i++){
-					fname += fileNameArr[i] + ((i!=((fileNameArr.length-1)))?".":"");
-				}
-				fext = fileNameArr[(fileNameArr.length-1)];
-			}
-			else if(fileNameArr.length==2){
-				fname = fileNameArr[0];
-				fext = fileNameArr[1];
-			}
-		}
-
-		console.log("fname: " + fname);
-		console.log("fext: " + fext);
-
-		if(!!fext && (fext=="apk" || fext=="ipa"))
-			uploadsSubFolderName = uploadsFolderName + "/" + fext;
-
-		if (!fs.existsSync(uploadsFolderName)){
-			fs.mkdirSync(uploadsFolderName);
-		}
-
-		if (!fs.existsSync(uploadsSubFolderName)){
-			fs.mkdirSync(uploadsSubFolderName);
-		}
-
-		//Path where apk/ipa will be uploaded
-		fstream = fs.createWriteStream(__dirname + "/" + uploadsSubFolderName + "/" + filename);
-		file.pipe(fstream);
-		fstream.on('close', function () {
-			console.log("Upload Finished of " + filename);
-			res.json({success: true}); //where to go next
+		commonFunctions.saveFile(file, filename, function(resp){
+			currTimestamp = new Date();
+			console.log("currTimestamp: " + currTimestamp);
+			console.log("req.body.fileData: " + JSON.stringify(req.body.fileData));
+			res.json(resp);
 		});
 	});
-	console.log("received a hit");
+	req.busboy.on('field', function(fieldname, val) {
+		req.body[fieldname] = JSON.parse(val);
+	});
+	req.busboy.on('finish', function(){
+		// console.log("currTimestamp: " + currTimestamp);
+		// console.log("req.body.fileData: " + JSON.stringify(req.body.fileData));
+		//commonFunctions.updateFilesModel(req.body.fileData, currTimestamp);
+	});
 });
 
 app.get("/download", function(req, res){
