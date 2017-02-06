@@ -28,11 +28,11 @@ app.engine('html', mustacheExpress());
 // views is directory for all template files
 app.set('views', __dirname + '/views');
 app.set('view engine', 'html');
-
+process.env.TZ = "Asia/Kolkata";
 var t = new time.Date();
 
 t.setTimezone('Asia/Kolkata');
-console.log("t.getDate(): " + t + " " + t.getTimezone());
+console.log("t.getDate(): " + t.toString() + " " + t.getTimezone());
 
 app.get('/', function(request, response) {
 	response.render('TalicAppStore.html');
