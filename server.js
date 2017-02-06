@@ -28,10 +28,10 @@ app.engine('html', mustacheExpress());
 // views is directory for all template files
 app.set('views', __dirname + '/views');
 app.set('view engine', 'html');
-//process.env.TZ = "Asia/Kolkata";
-//var t = new time.Date();
+process.env.TZ = "Asia/Kolkata";
+var t = new time.Date();
 
-//t.setTimezone('Asia/Kolkata');
+t.setTimezone('Asia/Kolkata');
 var tzDifference = (5.5) * 60 + (-330);
 var offsetTime = new Date(new Date().getTime() + tzDifference * 60 * 1000);
 console.log("t.getDate(): " + new Date().toISOString());
@@ -54,7 +54,7 @@ app.post("/login", function(req, res){
 						res.json({error: true, msg: "User does not exist!"});
 					}
 					if(count===1){
-						res.json({error: false, render: "devHome", "date": offsetTime});
+						res.json({error: false, render: "devHome", "date": offsetTime, "t": t.toString()});
 					}
 					else{
 						res.json({error: true, msg: "Invalid Credentials!"});
