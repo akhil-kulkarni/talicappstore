@@ -9,14 +9,13 @@ var bodyParser = require("body-parser");
 var app = express();
 
 var constants = require('./constants.js');
+var db = require('./models/db.js');
 var commonFunctions = require('./common/commonFunctions.js');
-var loginModel = require('./models/login.js');
+var modelFunctions = require('./common/modelFunctions.js');
+
+modelFunctions.printAllFileRecords();
 
 var config = commonFunctions.config();
-
-var time = require('time');
-
-//loginModel.find().exec(function (err, docs) {console.log(JSON.stringify(docs));});
 
 app.set('port', (process.env.app_port || 8081));
 app.use(busboy());
@@ -28,33 +27,26 @@ app.engine('html', mustacheExpress());
 // views is directory for all template files
 app.set('views', __dirname + '/views');
 app.set('view engine', 'html');
-process.env.TZ = "Asia/Kolkata";
-var t = new time.Date();
-
-t.setTimezone('Asia/Kolkata');
-var tzDifference = (5.5) * 60 + (-330);
-var offsetTime = new Date(new Date().getTime() + tzDifference * 60 * 1000);
-console.log("t.getDate(): " + new Date().toISOString());
 
 app.get('/', function(request, response) {
 	response.render('TalicAppStore.html');
 });
 
-app.get('/devHome', function(request, response) {
-	response.render('devHome.html');
+app.get('/devConsole', function(request, response) {
+	response.render('devConsole.html');
 });
 
 app.post("/login", function(req, res){
 	if(!!res && !!req.body && !!req.body.password && !!req.body.username){
 		console.log("req.body.username: " + req.body.username);
 		if(req.body.username=="dev" || req.body.username=="admin"){
-			loginModel.count({"username": req.body.username, "password": req.body.password}).exec(
+			modelFunctions.getLoginModelCount({"username": req.body.username, "password": req.body.password},
 				function(err, count){
 					if(err){
 						res.json({error: true, msg: "User does not exist!"});
 					}
 					if(count===1){
-						res.json({error: false, render: "devHome", "date": offsetTime, "t": t.toString()});
+						res.json({error: false, render: "devConsole"});
 					}
 					else{
 						res.json({error: true, msg: "Invalid Credentials!"});
@@ -76,15 +68,23 @@ app.post("/login", function(req, res){
 app.post('/upload', function(req, res) {
 	var fstream;
 	console.log("attempt made to upload file...");
-	var currTimestamp = null;
 	req.pipe(req.busboy);
 	req.busboy.on('file', function (fieldname, file, filename) {
 		console.log("Uploading: " + filename);
 		commonFunctions.saveFile(file, filename, function(resp){
-			currTimestamp = new Date();
-			console.log("currTimestamp: " + currTimestamp);
 			console.log("req.body.fileData: " + JSON.stringify(req.body.fileData));
-			res.json(resp);
+			if(!!resp && resp.success){
+				modelFunctions.updateFilesModel(req.body.fileData, function(err, updateRes){
+					if(err){
+						console.log("updateFilesModel err: " + err);
+						res.json({success: false, msg: err});
+					}
+					res.json({success: true, msg: "upload success"});
+				});
+			}
+			else{
+				res.json(resp);
+			}
 		});
 	});
 	req.busboy.on('field', function(fieldname, val) {
@@ -93,7 +93,7 @@ app.post('/upload', function(req, res) {
 	req.busboy.on('finish', function(){
 		// console.log("currTimestamp: " + currTimestamp);
 		// console.log("req.body.fileData: " + JSON.stringify(req.body.fileData));
-		//commonFunctions.updateFilesModel(req.body.fileData, currTimestamp);
+		// commonFunctions.updateFilesModel(req.body.fileData, currTimestamp);
 	});
 });
 

@@ -1,3 +1,17 @@
+var fileData = {
+	"_id": null,
+	"fileName": null,
+	"fileSize": null,
+	"fileCreatedBy": null,
+	"fileUpdatedBy": null,
+	"projectName": null,
+	"appVersionNumber": null,
+	"changeLog": null,
+	"doNotDelete": false,
+	"password": null,
+	"isProduction": false
+};
+
 $(function () {
 	$('#selectFile').fileupload({
 		dataType: 'json',
@@ -9,17 +23,11 @@ $(function () {
 					$("#cancelUpload").off("click");
 				}
 			);
-			data.formData = {
-				"fileData": JSON.stringify({
-					"appVersionNumber": "1.3.4",
-					"changeLog": "so and so .... adfsf ... ",
-					"doNotDelete": false,
-					"password": null,
-					"isProduction": false
-				})
-			};
 			data.context = $('#uploadBtn').click(
 				function(){
+					data.formData = {
+						"fileData": JSON.stringify(getFinalFileData())
+					};
 					console.log(data);
 					data.submit();
 					$("#uploadBtn").off("click");
@@ -45,6 +53,27 @@ $(function () {
 		}
 	});
 });
+
+function getFinalFileData(){
+	if(!!fileData){
+		if(!fileData.fileCreatedBy){
+			fileData.fileCreatedBy = (($('#uploaderName').val()||"").trim()) || null;
+		}
+		else{
+			fileData.fileUpdatedBy = (($('#uploaderName').val()||"").trim()) || null;
+		}
+		fileData.projectName = (($('#projectName').val()||"").trim()) || null;
+		fileData.appVersionNumber = (($('#appVersionNumber').val()||"").trim()) || null;
+		fileData.changeLog = (($('#changeLog').val()||"").trim()) || null;
+		if(!!fileData.changeLog){
+			fileData.changeLog = fileData.changeLog.split("\n").join("|");
+		}
+		fileData.doNotDelete = $('#doNotDelete').prop('checked');
+		fileData.isProduction = $('#isProduction').prop('checked');
+		fileData.password = ____trI343fjjdl(fileData.fileName, ((($('#password').val()||"").trim()) || null));
+	}
+	return fileData;
+}
 
 function getFileSize(file){
 	if(file.size<1024)
@@ -75,5 +104,7 @@ $(document).on('change', '#selectFile', function(e){
 	$('#fileSize').text("size: " + fileSize.size + " " + fileSize.unit);
 	$('.progress-bar').css('width', (0 + '%'));
 	$('.progress-bar').text('');
-	$('.uploadFile').show();
+	$('.upload-file').show();
+	fileData.fileName = selectedFile.name;
+	fileData.fileSize = selectedFile.size;
 });

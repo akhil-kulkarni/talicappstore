@@ -1,38 +1,37 @@
-
 var mongoose = require("mongoose");
-var mongoose = require("../common/commonFunctions");
+var commonFunctions = require("../common/commonFunctions");
 var config = commonFunctions.config();
-
-//connect to database
-var db = mongoose.connect(config.mongodb);
 
 var filesSchema = new mongoose.Schema({
 	fileName: String,
 	filePath: String,
-	fileSize: String,
+	fileSize: Number, // size of the file in bytes
+	fileType: String,
 	fileVersionNumber: Number, // signifies number of times a particular file was uploaded
-	appVersionNumber: Number, // user input
-	createdBy: String,
-	updatedBy: String,
-	deletedBy: String, // admin or scheduler
-	createdOn: Date,
-	updatedOn: Date,
-	deletedOn: Date,
+	projectName: String,
+	appVersionNumber: String, // user input
+	fileCreatedBy: String,
+	fileUpdatedBy: String,
+	fileDeletedBy: String, // admin or scheduler
+	fileCreatedOn: {type: Date, default: Date.now},
+	fileUpdatedOn: {type: Date, default: Date.now},
+	fileDeletedOn: Date,
 	changeLog: [{
-		fileVersionNumber: String,
+		fileVersionNumber: Number,
+		fileCreatedOn: {type: Date, default: Date.now},
 		changeLog: String // user input
 	}],
 	lastDownloadedOn: Date,
 	totalDownloads: Number,
-	doNotDelete: Boolean, // user input
+	doNotDelete: {type: Boolean, default: false}, // user input
 	password: String, // user input
-	isProduction: Boolean, // user input
+	isProduction: {type: Boolean, default: false}, // user input
 	dependencies: {
 		fileName: String,
 		filePath: String,
 		fileType: String,
 		filePurpose: String
 	}
-}, {collection: "filesCollection"});
+}, {collection: "filesCollection", timestamps: true});
 
-var filesModel = mongoose.model('files', fileListSchema);
+module.exports = mongoose.model('files', filesSchema);

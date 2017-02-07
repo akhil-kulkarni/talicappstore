@@ -1,9 +1,4 @@
 var mongoose = require("mongoose");
-var commonFunctions = require("../common/commonFunctions.js");
-var config = commonFunctions.config();
-
-//connect to database
-var db = mongoose.connect(config.mongodb);
 
 var loginSchema = new mongoose.Schema({
 	username: String,
@@ -41,4 +36,4 @@ loginModel.count({"username": "admin"}).exec(
 
 
 //compile schema to model
-module.exports = db.model('login', loginSchema);
+module.exports = mongoose.model('login', loginSchema);

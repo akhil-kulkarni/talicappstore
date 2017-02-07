@@ -4,6 +4,7 @@ var env = require('../env.json');
 var path = require('path'); //used for file path
 var fs = require('fs-extra'); //File System - for file manipulation
 var mime = require('mime');
+
 var commonFunctions = {
 	getHashedPassword: function(username){
 		var salt = username + "|talicappstore";
@@ -62,6 +63,15 @@ var commonFunctions = {
 		}
 		else{
 			saveFileCallback({success: false, msg: "file not found!"}); //where to go next
+		}
+	},
+	getFileExt: function(fileName){
+		if(!!fileName){
+			var fileNameArr = fileName.split(".");
+			return (fileNameArr[fileNameArr.length-1]);
+		}
+		else{
+			return null;
 		}
 	}
 };
