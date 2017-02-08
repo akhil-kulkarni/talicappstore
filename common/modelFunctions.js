@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var commonFunctions = require("./commonFunctions");
 var loginModel = require('../models/login.js');
 var filesModel = require('../models/files.js');
 
@@ -13,7 +12,6 @@ var modelFunctions = {
 	},
 	updateFilesModel: function(fileData, callback){
 		if(!!fileData){
-			fileData.fileType = commonFunctions.getFileExt(fileData.fileName);
 			if(!!fileData._id){
 				filesModel.findOne({_id: fileData._id}, 'fileVersionNumber changeLog', function(err, file){
 					if(err){
@@ -41,6 +39,29 @@ var modelFunctions = {
 		else{
 			callback("file related data cannot be blank!");
 		}
+	},
+	getFileListWithMetaData: function(isProduction, callback){
+		filesModel.find({isProduction: isProduction, fileDeletedOn: null}).select('fileName fileType filePath fileSize fileVersionNumber projectName appVersionNumber fileCreatedBy fileUpdatedBy fileCreatedOn fileUpdatedOn changeLog totalDownloads').sort('-fileUpdatedOn').exec(function(err, files){
+			if(!!err){
+				return callback(err);
+			}
+			var fileList = JSON.parse(JSON.stringify(files));
+			if(!!fileList && fileList.length>0){
+				fileList.forEach(function(file){
+					file.changeLog = (file.changeLog).filter(function(fl){
+						return (fl.fileVersionNumber==file.fileVersionNumber);
+					});
+					file.changeLog = (file.changeLog[0].changeLog).split("|");
+					file.fileUpdatedOn = new Date(file.fileUpdatedOn);
+					file.filePath += file.fileName;
+					file.itms = "itms-services://?action=download-manifest&amp;url=https://lp.tataaia.com/Insight-Info.plist";
+				});
+				return callback(err, fileList);
+			}
+			else{
+				return callback("no file found", null);
+			}
+		});
 	}
 };
 

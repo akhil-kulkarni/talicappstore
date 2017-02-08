@@ -1,6 +1,4 @@
 var mongoose = require("mongoose");
-var commonFunctions = require("../common/commonFunctions");
-var config = commonFunctions.config();
 
 var filesSchema = new mongoose.Schema({
 	fileName: String,

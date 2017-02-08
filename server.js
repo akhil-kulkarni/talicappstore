@@ -1,5 +1,5 @@
 var express = require("express");
-var mustacheExpress = require("mustache-express");
+var exphbs  = require('express-handlebars');
 
 var mongoose = require('mongoose');
 
@@ -11,9 +11,12 @@ var app = express();
 var constants = require('./constants.js');
 var db = require('./models/db.js');
 var commonFunctions = require('./common/commonFunctions.js');
-var modelFunctions = require('./common/modelFunctions.js');
 
-modelFunctions.printAllFileRecords();
+var path = require('path'); //used for file path
+var fs = require('fs-extra'); //File System - for file manipulation
+var mime = require('mime');
+
+//commonFunctions.printAllFileRecords();
 
 var config = commonFunctions.config();
 
@@ -23,24 +26,42 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 
-app.engine('html', mustacheExpress());
-// views is directory for all template files
-app.set('views', __dirname + '/views');
-app.set('view engine', 'html');
+var hbs = exphbs.create({
+	helpers: {
+		json: function(val){ return JSON.stringify(val);},
+		ifcond: function(v1, operator, v2, options){return commonFunctions.ifCondHelper(v1, operator, v2, options);}
+	},
+	defaultLayout: 'main',
+	layoutsDir:  __dirname + '/views/layouts',
+	partialsDir: [ __dirname + '/views/partials'],
+	extname: '.hbs'
+});
+app.engine('.hbs', hbs.engine);
+app.set('view engine', '.hbs');
+app.set('views', __dirname + '/views/partials');
 
-app.get('/', function(request, response) {
-	response.render('TalicAppStore.html');
+
+app.get('/', function(req, res) {
+	commonFunctions.getFileListWithMetaData(false, function(err, fileRes){
+		console.log("fileRes: " + JSON.stringify(fileRes));
+		if(!!err){
+			res.render('TalicAppStore', {"file": null});
+		}
+		else{
+			res.render('TalicAppStore', {"file": fileRes});
+		}
+	});
 });
 
-app.get('/devConsole', function(request, response) {
-	response.render('devConsole.html');
+app.get('/devConsole', function(req, res) {
+	res.render('devConsole');
 });
 
 app.post("/login", function(req, res){
 	if(!!res && !!req.body && !!req.body.password && !!req.body.username){
 		console.log("req.body.username: " + req.body.username);
 		if(req.body.username=="dev" || req.body.username=="admin"){
-			modelFunctions.getLoginModelCount({"username": req.body.username, "password": req.body.password},
+			commonFunctions.getLoginModelCount({"username": req.body.username, "password": req.body.password},
 				function(err, count){
 					if(err){
 						res.json({error: true, msg: "User does not exist!"});
@@ -74,7 +95,7 @@ app.post('/upload', function(req, res) {
 		commonFunctions.saveFile(file, filename, function(resp){
 			console.log("req.body.fileData: " + JSON.stringify(req.body.fileData));
 			if(!!resp && resp.success){
-				modelFunctions.updateFilesModel(req.body.fileData, function(err, updateRes){
+				commonFunctions.updateFilesModel(req.body.fileData, function(err, updateRes){
 					if(err){
 						console.log("updateFilesModel err: " + err);
 						res.json({success: false, msg: err});
@@ -98,7 +119,8 @@ app.post('/upload', function(req, res) {
 });
 
 app.get("/download", function(req, res){
-	var file = __dirname + '/public/uploads/apk/GoodConnect.apk';
+	var file = req.query.filePath;
+	console.log("req.body.filePath: " + JSON.stringify(req.query));
 	if(!!file){
 		var filename = path.basename(file);
 		var mimetype = mime.lookup(file);

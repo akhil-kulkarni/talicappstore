@@ -26,3 +26,7 @@ function loginFormSubmit() {
 		alert("Please enter the username and password.");
 	}
 }
+
+function downloadFile(currEle){
+	$(currEle).closest('form').submit();
+}

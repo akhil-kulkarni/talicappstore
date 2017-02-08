@@ -4,8 +4,12 @@ var env = require('../env.json');
 var path = require('path'); //used for file path
 var fs = require('fs-extra'); //File System - for file manipulation
 var mime = require('mime');
+var modelFunctions = require('./modelFunctions.js');
 
 var commonFunctions = {
+	getLoginModelCount: function(req, callback){
+		modelFunctions.getLoginModelCount(req, callback);
+	},
 	getHashedPassword: function(username){
 		var salt = username + "|talicappstore";
 		var password = "Tata_001";
@@ -72,6 +76,48 @@ var commonFunctions = {
 		}
 		else{
 			return null;
+		}
+	},
+	updateFilesModel: function(fileData, callback){
+		if(!!fileData){
+			fileData.fileType = this.getFileExt(fileData.fileName);
+			fileData.filePath = constants.uploadsFolderPath + "/" + fileData.fileType + "/";
+			modelFunctions.updateFilesModel(fileData, callback);
+		}
+		else{
+			return callback("file data cannot be blank!");
+		}
+	},
+	printAllFileRecords: function(){
+		modelFunctions.printAllFileRecords();
+	},
+	getFileListWithMetaData: function(isProduction, callback){
+		modelFunctions.getFileListWithMetaData(isProduction, callback);
+	},
+	ifCondHelper: function(v1, operator, v2, options){
+		switch (operator) {
+			case '==':
+				return (v1 == v2) ? options.fn(this) : options.inverse(this);
+			case '===':
+				return (v1 === v2) ? options.fn(this) : options.inverse(this);
+			case '!=':
+				return (v1 != v2) ? options.fn(this) : options.inverse(this);
+			case '!==':
+				return (v1 !== v2) ? options.fn(this) : options.inverse(this);
+			case '<':
+				return (v1 < v2) ? options.fn(this) : options.inverse(this);
+			case '<=':
+				return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+			case '>':
+				return (v1 > v2) ? options.fn(this) : options.inverse(this);
+			case '>=':
+				return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+			case '&&':
+				return (v1 && v2) ? options.fn(this) : options.inverse(this);
+			case '||':
+				return (v1 || v2) ? options.fn(this) : options.inverse(this);
+			default:
+				return options.inverse(this);
 		}
 	}
 };
