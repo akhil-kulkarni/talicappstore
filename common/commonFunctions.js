@@ -78,11 +78,17 @@ var commonFunctions = {
 			return null;
 		}
 	},
-	updateFilesModel: function(fileData, callback){
+	updateFilesModel: function(fileData, isDownload, callback){
 		if(!!fileData){
-			fileData.fileType = this.getFileExt(fileData.fileName);
-			fileData.filePath = constants.uploadsFolderPath + "/" + fileData.fileType + "/";
-			modelFunctions.updateFilesModel(fileData, callback);
+			if(!isDownload){
+				fileData.fileType = fileData.fileType || this.getFileExt(fileData.fileName);
+				fileData.filePath = fileData.filePath || (constants.uploadsFolderPath + "/" + fileData.fileType + "/");
+			}
+			else{
+				// delete fileData.filePath so as to not overwrite path during download
+				delete fileData.filePath;
+			}
+			modelFunctions.updateFilesModel(fileData, isDownload, callback);
 		}
 		else{
 			return callback("file data cannot be blank!");
@@ -92,9 +98,10 @@ var commonFunctions = {
 		modelFunctions.printAllFileRecords();
 	},
 	getFileListWithMetaData: function(isProduction, callback){
-		modelFunctions.getFileListWithMetaData(isProduction, this.getDateTimeToSend, callback);
+		modelFunctions.getFileListWithMetaData(isProduction, this.getDateTimeToSend, this.getFileSizeReadable, callback);
 	},
-	ifCondHelper: function(v1, operator, v2, options){
+	ifCondHelper: function(v1, operator, v2, itms, options){
+		console.log("itms: " + itms);
 		switch (operator) {
 			case '==':
 				return (v1 == v2) ? options.fn(this) : options.inverse(this);
@@ -143,6 +150,31 @@ var commonFunctions = {
 		var isoDateArr = isoArr[0].split("-");
 		var finalString = isoDateArr[2] + "-" + isoDateArr[1] + "-" + isoDateArr[0] + " " + (isoArr[1].split("."))[0];
 		return finalString;
+	},
+	downloadFile: function(file, res){
+		var filename = path.basename(file);
+		var mimetype = mime.lookup(file);
+		console.log("mimetype: " + mimetype);
+		res.setHeader('Content-disposition', 'attachment; filename=' + filename);
+		res.setHeader('Content-type', mimetype);
+		var filestream = fs.createReadStream(file);
+		filestream.pipe(res);
+	},
+	getFileSizeReadable: function(file){
+		if(file.size<1024)
+			return file;
+		else {
+			file.size = ((file.size)/1024).toFixed(2);
+			if(file.unit==="bytes")
+				file.unit = "KB";
+			else if(file.unit==="KB")
+				file.unit = "MB";
+			else if(file.unit==="MB")
+				file.unit = "GB";
+			else
+				file.unit = null;
+			return commonFunctions.getFileSizeReadable(file);
+		}
 	}
 };
 

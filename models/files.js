@@ -3,9 +3,9 @@ var mongoose = require("mongoose");
 var filesSchema = new mongoose.Schema({
 	fileName: String,
 	filePath: String,
-	fileSize: Number, // size of the file in bytes
+	fileSize: {type: Number, default: 0}, // size of the file in bytes
 	fileType: String,
-	fileVersionNumber: Number, // signifies number of times a particular file was uploaded
+	fileVersionNumber: {type: Number, default: 1},
 	projectName: String,
 	appVersionNumber: String, // user input
 	fileCreatedBy: String,
@@ -15,12 +15,12 @@ var filesSchema = new mongoose.Schema({
 	fileUpdatedOn: {type: Date, default: Date.now},
 	fileDeletedOn: Date,
 	changeLog: [{
-		fileVersionNumber: Number,
+		fileVersionNumber: {type: Number, default: 1},
 		fileCreatedOn: {type: Date, default: Date.now},
 		changeLog: String // user input
 	}],
 	lastDownloadedOn: Date,
-	totalDownloads: Number,
+	totalDownloads: {type: Number, default: 0},
 	doNotDelete: {type: Boolean, default: false}, // user input
 	password: String, // user input
 	isProduction: {type: Boolean, default: false}, // user input

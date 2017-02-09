@@ -12,10 +12,6 @@ var constants = require('./constants.js');
 var db = require('./models/db.js');
 var commonFunctions = require('./common/commonFunctions.js');
 
-var path = require('path'); //used for file path
-var fs = require('fs-extra'); //File System - for file manipulation
-var mime = require('mime');
-
 //commonFunctions.printAllFileRecords();
 
 var config = commonFunctions.config();
@@ -28,8 +24,8 @@ app.use(express.static(__dirname + '/public'));
 
 var hbs = exphbs.create({
 	helpers: {
-		json: function(val){ return JSON.stringify(val);},
-		ifcond: function(v1, operator, v2, options){return commonFunctions.ifCondHelper(v1, operator, v2, options);}
+		json: function(val){ console.log("JSON helper: " + val); return JSON.stringify(val);},
+		ifcond: function(v1, operator, v2, itms, options){return commonFunctions.ifCondHelper(v1, operator, v2, itms, options);}
 	},
 	defaultLayout: 'main',
 	layoutsDir:  __dirname + '/views/layouts',
@@ -96,7 +92,7 @@ app.post('/upload', function(req, res) {
 		commonFunctions.saveFile(file, filename, function(resp){
 			console.log("req.body.fileData: " + JSON.stringify(req.body.fileData));
 			if(!!resp && resp.success){
-				commonFunctions.updateFilesModel(req.body.fileData, function(err, updateRes){
+				commonFunctions.updateFilesModel(req.body.fileData, false, function(err, updateRes){
 					if(err){
 						console.log("updateFilesModel err: " + err);
 						res.json({success: false, msg: err});
@@ -113,9 +109,7 @@ app.post('/upload', function(req, res) {
 		req.body[fieldname] = JSON.parse(val);
 	});
 	req.busboy.on('finish', function(){
-		// console.log("currTimestamp: " + currTimestamp);
-		// console.log("req.body.fileData: " + JSON.stringify(req.body.fileData));
-		// commonFunctions.updateFilesModel(req.body.fileData, currTimestamp);
+		// things to be done after handling the file
 	});
 });
 
@@ -123,13 +117,13 @@ app.get("/download", function(req, res){
 	var file = req.query.filePath;
 	console.log("req.body.filePath: " + JSON.stringify(req.query));
 	if(!!file){
-		var filename = path.basename(file);
-		var mimetype = mime.lookup(file);
-		console.log("mimetype: " + mimetype);
-		res.setHeader('Content-disposition', 'attachment; filename=' + filename);
-		res.setHeader('Content-type', mimetype);
-		var filestream = fs.createReadStream(file);
-		filestream.pipe(res);
+		commonFunctions.updateFilesModel(req.query, true, function(err, msg){
+			if(!!err){
+				console.log("error updating download file details: " + err);
+				res.json("Unable to download file!");
+			}
+			commonFunctions.downloadFile(file, res);
+		});
 	}
 });
 

@@ -22,7 +22,7 @@ mongoose.connection.on('disconnected', function () {
 });
 
 // mongoose.connection.once('connected', function(){
-//	mongoose.connection.db.dropCollection('filesCollection');
+// 	mongoose.connection.db.dropCollection('filesCollection');
 // });
 
 // If the Node process ends, close the Mongoose connection

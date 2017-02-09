@@ -56,8 +56,10 @@
 								<h3><span style="width: 150px; word-wrap: break-word;">{{projectName}}</span></h3>
 							</div>
 							<p>Version No: {{appVersionNumber}}</p>
+							<p>Size: {{fileSize}}</p>
+							<p>Uploaded By: {{#if fileUpdatedBy}} {{fileUpdatedBy}} {{else}} {{fileCreatedBy}}{{/if}}</p>
 							<p>Total Downloads: {{totalDownloads}}</p>
-							<p>Uploaded By: {{#if fileUpdatedBy}} {{fileUpdatedBy}} {{else}} {{fileCreatedBy}} {{/if}}</p>
+							<p>Last Downloaded On: {{lastDownloadedOn}}</p>
 							<p>Release Date: {{fileUpdatedOn}} </p>
 							<p>Release Note: </p>
 							<ol>
@@ -66,24 +68,25 @@
 							{{/each}}
 							</ol>
 							<form name={{_id}} method="GET" enctype="multipart/form-data" action="/download">
+								<input type="hidden" name="_id" value="{{_id}}"/>
 								<input type="hidden" name="filePath" value="{{filePath}}"/>
-								{{#ifcond fileType '==' 'apk'}}
+								{{#if isapk}}
 									<div class="text-center">
 										<a class="btn btn-danger no-radius android-icon" onclick="downloadFile(this)">
 											<i class="fa fa-android fa-lg"></i>
 											Download for Android
 										</a>
 									</div>
-								{{/ifcond}}
+								{{/if}}
 								<!-- todo: link multiple files (apk, ipa) to same project/ release -->
-								{{#ifcond fileType '==' 'ipa'}}
+								{{#if isipa}}
 									<div class="text-center">
 										<a class="btn btn-danger no-radius ios-icon" href={{itms}}>
 											<i class="fa fa-apple fa-lg"></i>
 											Download for iOS
 										</a>
 									</div>
-								{{/ifcond}}
+								{{/if}}
 							</form>
 						</div>
 					</div>
