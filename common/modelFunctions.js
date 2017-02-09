@@ -62,19 +62,6 @@ var modelFunctions = {
 				return callback("no file found", null);
 			}
 		});
-	},
-	getTZISOString: function(offset){
-		// expects timezone offset as parameter - default: IST(Indian Standard Time) = (-330)
-		offset = offset || (-330);
-		var tzISOString = (new Date((new Date().getTime())-((offset) * (60) * (1000)))).toISOString();
-		return tzISOString;
-	},
-	getDateTimeToSend: function(tzISOString){
-		// expects Date - ISO string as parameter
-		var isoArr = tzISOString.replace("Z","").split("T");
-		var isoDateArr = isoArr[0].split("-");
-		var finalString = isoDateArr[2] + "-" + isoDateArr[1] + "-" + isoDateArr[0] + " " + isoArr[1];
-		return finalString;
 	}
 
 };
