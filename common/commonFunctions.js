@@ -120,16 +120,24 @@ var commonFunctions = {
 				return options.inverse(this);
 		}
 	},
-	getTZISOString: function(offset){
-		// expects timezone offset as parameter - default: IST(Indian Standard Time) = (-330)
+	getTZISOString: function(dateISO, offset){
+		// expects timezone offset as parameter - default: IST(Indian Standard Time) = (-330), default date will be new Date()
+		if(!dateISO)
+			dateISO = new Date();
+		else
+			dateISO = new Date(dateISO);
 		offset = offset || (-330);
-		var tzISOString = (new Date((new Date().getTime())-((offset) * (60) * (1000)))).toISOString();
+		var tzISOString = (new Date((dateISO.getTime())-((offset) * (60) * (1000)))).toISOString();
 		return tzISOString;
 	},
-	getDateTimeToSend: function(tzISOString){
+	getDateTimeToSend: function(tzISOString, tzConversionNeeded){
 		// expects Date - ISO string as parameter. If not provided will return current date & time in IST.
 		if(!tzISOString){
-			tzISOString = this.getTZISOString();
+			tzISOString = commonFunctions.getTZISOString();
+		}
+		else if(!!tzConversionNeeded){
+			console.log("tzISOString: " + tzISOString);
+			tzISOString = commonFunctions.getTZISOString(tzISOString);
 		}
 		var isoArr = tzISOString.replace("Z","").split("T");
 		var isoDateArr = isoArr[0].split("-");

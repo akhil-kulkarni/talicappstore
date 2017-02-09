@@ -53,9 +53,9 @@ var modelFunctions = {
 					});
 					file.changeLog = (file.changeLog[0].changeLog).split("|");
 					if(!!file.fileCreatedOn)
-						file.fileCreatedOn = __getDateTimeToSend(file.fileCreatedOn);
+						file.fileCreatedOn = __getDateTimeToSend(file.fileCreatedOn, true);
 					if(!!file.fileUpdatedOn)
-						file.fileUpdatedOn = __getDateTimeToSend(file.fileUpdatedOn);
+						file.fileUpdatedOn = __getDateTimeToSend(file.fileUpdatedOn, true);
 					file.filePath += file.fileName;
 					file.itms = "itms-services://?action=download-manifest&amp;url=https://lp.tataaia.com/Insight-Info.plist";
 				});
