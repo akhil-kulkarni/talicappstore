@@ -40,7 +40,7 @@ app.engine('.hbs', hbs.engine);
 app.set('view engine', '.hbs');
 app.set('views', __dirname + '/views/partials');
 
-console.log("final date test: " + commonFunctions.getDateTimeToSend(commonFunctions.getTZISOString()));
+console.log("final date test: " + commonFunctions.getDateTimeToSend());
 
 app.get('/', function(req, res) {
 	commonFunctions.getFileListWithMetaData(false, function(err, fileRes){

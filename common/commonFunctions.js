@@ -92,7 +92,7 @@ var commonFunctions = {
 		modelFunctions.printAllFileRecords();
 	},
 	getFileListWithMetaData: function(isProduction, callback){
-		modelFunctions.getFileListWithMetaData(isProduction, callback);
+		modelFunctions.getFileListWithMetaData(isProduction, this.getDateTimeToSend, callback);
 	},
 	ifCondHelper: function(v1, operator, v2, options){
 		switch (operator) {
@@ -127,10 +127,13 @@ var commonFunctions = {
 		return tzISOString;
 	},
 	getDateTimeToSend: function(tzISOString){
-		// expects Date - ISO string as parameter
+		// expects Date - ISO string as parameter. If not provided will return current date & time in IST.
+		if(!tzISOString){
+			tzISOString = this.getTZISOString();
+		}
 		var isoArr = tzISOString.replace("Z","").split("T");
 		var isoDateArr = isoArr[0].split("-");
-		var finalString = isoDateArr[2] + "-" + isoDateArr[1] + "-" + isoDateArr[0] + " " + isoArr[1];
+		var finalString = isoDateArr[2] + "-" + isoDateArr[1] + "-" + isoDateArr[0] + " " + (isoArr[1].split("."))[0];
 		return finalString;
 	}
 };

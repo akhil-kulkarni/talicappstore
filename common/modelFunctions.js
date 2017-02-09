@@ -40,7 +40,7 @@ var modelFunctions = {
 			callback("file related data cannot be blank!");
 		}
 	},
-	getFileListWithMetaData: function(isProduction, callback){
+	getFileListWithMetaData: function(isProduction, __getDateTimeToSend, callback){
 		filesModel.find({isProduction: isProduction, fileDeletedOn: null}).select('fileName fileType filePath fileSize fileVersionNumber projectName appVersionNumber fileCreatedBy fileUpdatedBy fileCreatedOn fileUpdatedOn changeLog totalDownloads').sort('-fileUpdatedOn').exec(function(err, files){
 			if(!!err){
 				return callback(err);
@@ -52,7 +52,10 @@ var modelFunctions = {
 						return (fl.fileVersionNumber==file.fileVersionNumber);
 					});
 					file.changeLog = (file.changeLog[0].changeLog).split("|");
-					file.fileUpdatedOn = new Date(file.fileUpdatedOn);
+					if(!!file.fileCreatedOn)
+						file.fileCreatedOn = __getDateTimeToSend(file.fileCreatedOn);
+					if(!!file.fileUpdatedOn)
+						file.fileUpdatedOn = __getDateTimeToSend(file.fileUpdatedOn);
 					file.filePath += file.fileName;
 					file.itms = "itms-services://?action=download-manifest&amp;url=https://lp.tataaia.com/Insight-Info.plist";
 				});
