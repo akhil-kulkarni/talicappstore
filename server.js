@@ -40,8 +40,7 @@ app.engine('.hbs', hbs.engine);
 app.set('view engine', '.hbs');
 app.set('views', __dirname + '/views/partials');
 
-var currTime = new Date().getTime();
-console.log("\nDate Test: " + (new Date(currTime-((-330) * (60) * (1000)))).toISOString() + "\n");
+console.log("final date test: " + commonFunctions.getDateTimeToSend(commonFunctions.getTZISOString()));
 
 app.get('/', function(req, res) {
 	commonFunctions.getFileListWithMetaData(false, function(err, fileRes){
