@@ -38,9 +38,9 @@ app.set('views', __dirname + '/views/partials');
 
 console.log("final date test: " + commonFunctions.getDateTimeToSend());
 
-// commonFunctions.sendMail('John Cena', "Test Mail", "klkrni.akhil@gmail.com", null, "<b>Hello Again! WWE Rocks...</b>", function(){
-// 	console.log("send mail callback");
-// });
+commonFunctions.sendMail('John Cena', "Test Mail", "klkrni.akhil@gmail.com", null, "<b>Hello Again! WWE Rocks...</b>", function(){
+	console.log("send mail callback");
+});
 
 app.get('/', function(req, res) {
 	commonFunctions.getFileListWithMetaData(false, function(err, fileRes){
