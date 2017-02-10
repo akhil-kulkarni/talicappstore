@@ -74,16 +74,13 @@ var modelFunctions = {
 					if(!!file.fileSize){
 						console.log("fileSize: " + file.fileSize);
 						file.fileSize = __getFileSizeReadable({"size": file.fileSize, "unit": "bytes"});
-						file.fileSize = file.fileSize.size + file.fileSize.unit;
+						file.fileSize = file.fileSize.size + " " + file.fileSize.unit;
 					}
 					file.filePath += file.fileName;
 					file.itms = "itms-services://?action=download-manifest&amp;url=https://lp.tataaia.com/Insight-Info.plist";
-					file.isapk = false;
-					file.isipa = false;
+					file.isapk = false;;
 					if(file.fileType=='apk')
 						file.isapk = true;
-					else if(file.fileType=='ipa')
-						file.isipa = true;
 				});
 				return callback(err, fileList);
 			}

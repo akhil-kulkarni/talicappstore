@@ -27,6 +27,24 @@ function loginFormSubmit() {
 	}
 }
 
-function downloadFile(currEle){
-	$(currEle).closest('form').submit();
+function downloadFile(type, currEle){
+	if(type=='apk'){
+		$(currEle).closest('form').submit();
+	}
+	else if(type=="ipa"){
+		var form = $(currEle).closest('form');
+		var sendObj = { "filePath": form.find("input[name='filePath']").val(), "_id": form.find("input[name='_id']").val(), "isipa": true };
+		$.ajax({
+			url: "/download",
+			type: "GET",
+			data: sendObj,
+			success: function(res){
+				if(!!res){
+					if(!res.success){
+						console.log("download ipa error: " + res.err);
+					}
+				}
+			}
+		});
+	}
 }

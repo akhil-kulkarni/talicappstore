@@ -67,27 +67,29 @@
 								<li>{{this}}</li>
 							{{/each}}
 							</ol>
-							<form name={{_id}} method="GET" enctype="multipart/form-data" action="/download">
-								<input type="hidden" name="_id" value="{{_id}}"/>
-								<input type="hidden" name="filePath" value="{{filePath}}"/>
-								{{#if isapk}}
+							{{#if isapk}}
+								<form id={{_id}} name={{_id}} method="GET" enctype="multipart/form-data" action="/download">
+									<input type="hidden" name="_id" value="{{_id}}"/>
+									<input type="hidden" name="filePath" value="{{filePath}}"/>
 									<div class="text-center">
-										<a class="btn btn-danger no-radius android-icon" onclick="downloadFile(this)">
+										<a class="btn btn-danger no-radius android-icon" onclick="downloadFile('apk', this)">
 											<i class="fa fa-android fa-lg"></i>
 											Download for Android
 										</a>
 									</div>
-								{{/if}}
-								<!-- todo: link multiple files (apk, ipa) to same project/ release -->
-								{{#if isipa}}
+								</form>
+							{{else}}
+								<form id={{_id}}>
+									<input type="hidden" name="_id" value="{{_id}}"/>
+									<input type="hidden" name="filePath" value="{{filePath}}"/>
 									<div class="text-center">
-										<a class="btn btn-danger no-radius ios-icon" href={{itms}}>
+										<a class="btn btn-danger no-radius ios-icon" onclick="downloadFile('ipa', this)" href={{itms}}>
 											<i class="fa fa-apple fa-lg"></i>
 											Download for iOS
 										</a>
 									</div>
-								{{/if}}
-							</form>
+								</form>
+							{{/if}}
 						</div>
 					</div>
 				{{/each}}

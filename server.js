@@ -120,9 +120,14 @@ app.get("/download", function(req, res){
 		commonFunctions.updateFilesModel(req.query, true, function(err, msg){
 			if(!!err){
 				console.log("error updating download file details: " + err);
-				res.json("Unable to download file!");
+				res.json({"success": false, "err": "Unable to download file!"});
 			}
-			commonFunctions.downloadFile(file, res);
+			if(!req.query.isipa){
+				commonFunctions.downloadFile(file, res);
+			}
+			else{
+				res.json({"success": true});
+			}
 		});
 	}
 });
