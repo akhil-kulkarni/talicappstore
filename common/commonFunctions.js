@@ -1,11 +1,11 @@
 var crypto = require('crypto');
+var nodemailer = require('nodemailer');
 var constants = require('../constants.js');
 var env = require('../env.json');
 var path = require('path'); //used for file path
 var fs = require('fs-extra'); //File System - for file manipulation
 var mime = require('mime');
 var modelFunctions = require('./modelFunctions.js');
-var nodemailer = require('nodemailer');
 
 var commonFunctions = {
 	getLoginModelCount: function(req, callback){
