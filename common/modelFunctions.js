@@ -78,7 +78,7 @@ var modelFunctions = {
 					}
 					file.filePath += file.fileName;
 					file.itms = "itms-services://?action=download-manifest&amp;url=https://lp.tataaia.com/Insight-Info.plist";
-					file.isapk = false;;
+					file.isapk = false;
 					if(file.fileType=='apk')
 						file.isapk = true;
 				});

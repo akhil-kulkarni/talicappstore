@@ -5,6 +5,7 @@ var path = require('path'); //used for file path
 var fs = require('fs-extra'); //File System - for file manipulation
 var mime = require('mime');
 var modelFunctions = require('./modelFunctions.js');
+var nodemailer = require('nodemailer');
 
 var commonFunctions = {
 	getLoginModelCount: function(req, callback){
@@ -175,6 +176,32 @@ var commonFunctions = {
 				file.unit = null;
 			return commonFunctions.getFileSizeReadable(file);
 		}
+	},
+	getNMTransporter: function(){
+		return nodemailer.createTransport({
+			service: 'Gmail',
+			auth: constants.oAuth2Config
+		});
+	},
+	sendMail: function(from, subject, mailingList, ccList, mailContent, callback){
+		var mailOptions = {
+			from: ((from || "Tabsales Dev Team") + ' <' + 'akhil16.4.93@gmail.com' + '>'), // sender address
+			to: mailingList, // comma separated list or array of receivers
+			cc: ccList, // comma separated list or array of receivers
+			subject: (subject || 'Important Announcement!'),
+			//text: 'text', // plaintext body
+			html: (mailContent || '<b>Hello world!</b>') // You can choose to send an HTML body instead
+		};
+		commonFunctions.getNMTransporter().sendMail(mailOptions, function(error, info){
+			if(error){
+				console.log(error);
+				callback(error);
+			}
+			else{
+				console.log('Message sent: ' + info.response);
+				callback(null, info);
+			}
+		});
 	}
 };
 
