@@ -215,15 +215,10 @@ var commonFunctions = {
 	},
 	saveOrUpdatePLISTFile: function(fileData, callback){
 		if(!!fileData && fileData.fileType==="ipa"){
-			console.log("file ipa: " + fileData.filePath + fileData.fileName);
 			ipaMetadata((fileData.filePath + fileData.fileName), function(error, data){
-				if(error){
-					//return callback(error);
-				}
-				console.log("ipa metadata: " + JSON.stringify(data.metadata));
 				data = data.metadata;
 				var plist = constants.plistTemplate;
-				plist = plist.replace("||URL||", (fileData.filePath + fileData.fileName));
+				plist = plist.replace("||URL||", (commonFunctions.config().siteURL + "/uploads/ipa/" + fileData.fileName));
 				plist = plist.replace("||BUNDLE_IDENTIFIER||", data.CFBundleIdentifier);
 				plist = plist.replace("||TITLE||", data.CFBundleName);
 				plist = plist.replace("||VERSION_NO||", data.CFBundleVersion);
@@ -241,13 +236,11 @@ var commonFunctions = {
 				plistRes.fileName = commonFunctions.getFileNameWithoutExt(fileData.fileName) + "." + plistRes.fileType;
 				plistRes.filePath = commonFunctions.config().siteURL + "/uploads/ipa/";
 				plistRes.fileType = "to download and install the ipa on iOS devices";
-				console.log("plistRes before save: " + JSON.stringify(plist));
 				fs.writeFile(filePathForSaving + plistRes.fileName, plist, function(err) {
 					if(err) {
 						console.log("error saving plist: " + err);
 						return callback(err);
 					}
-					console.log("plistRes save callback: " + JSON.stringify(plistRes));
 					callback(null, plistRes);
 				});
 			});
