@@ -21,9 +21,9 @@ mongoose.connection.on('disconnected', function () {
 	console.log('Mongoose default connection disconnected');
 });
 
-// mongoose.connection.once('connected', function(){
-// 	mongoose.connection.db.dropCollection('filesCollection');
-// });
+mongoose.connection.once('connected', function(){
+	mongoose.connection.db.dropCollection('filesCollection');
+});
 
 // If the Node process ends, close the Mongoose connection
 process.on('SIGINT', function() {

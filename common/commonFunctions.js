@@ -236,12 +236,13 @@ var commonFunctions = {
 				}
 
 				var plistRes = {};
+				var filePathForSaving = constants.uploadsFolderPath + "/ipa/";
 				plistRes.fileType = "plist";
 				plistRes.fileName = commonFunctions.getFileNameWithoutExt(fileData.fileName) + "." + plistRes.fileType;
-				plistRes.filePath = constants.uploadsFolderPath + "/ipa/";
+				plistRes.filePath = commonFunctions.config().siteURL + "/uploads/ipa/";
 				plistRes.fileType = "to download and install the ipa on iOS devices";
 				console.log("plistRes before save: " + JSON.stringify(plist));
-				fs.writeFile(plistRes.filePath + plistRes.fileName, plist, function(err) {
+				fs.writeFile(filePathForSaving + plistRes.fileName, plist, function(err) {
 					if(err) {
 						console.log("error saving plist: " + err);
 						return callback(err);
