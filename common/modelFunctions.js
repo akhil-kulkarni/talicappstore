@@ -53,7 +53,7 @@ var modelFunctions = {
 		}
 	},
 	getFileListWithMetaData: function(isProduction, __getDateTimeToSend, __getFileSizeReadable, callback){
-		filesModel.find({isProduction: isProduction, fileDeletedOn: null}).select('fileName fileType filePath fileSize fileVersionNumber projectName appVersionNumber fileCreatedBy fileUpdatedBy fileCreatedOn fileUpdatedOn changeLog totalDownloads lastDownloadedOn').sort('-fileUpdatedOn').exec(function(err, files){
+		filesModel.find({isProduction: isProduction, fileDeletedOn: null}).select('fileName fileType filePath fileSize fileVersionNumber projectName appVersionNumber fileCreatedBy fileUpdatedBy fileCreatedOn fileUpdatedOn changeLog dependencies totalDownloads lastDownloadedOn').sort('-fileUpdatedOn').exec(function(err, files){
 			if(!!err){
 				return callback(err);
 			}
@@ -78,9 +78,11 @@ var modelFunctions = {
 					}
 					file.filePath += file.fileName;
 					file.itms = "itms-services://?action=download-manifest&amp;url=https://lp.tataaia.com/Insight-Info.plist";
-					file.isapk = false;
-					if(file.fileType=='apk')
-						file.isapk = true;
+					file.isapk = true;
+					if(file.fileType=='ipa' && !!file.dependencies){
+						file.isapk = false;
+						file.filePath = "itms-services://?action=download-manifest&amp;url=" + file.dependencies.filePath + file.dependencies.fileName;
+					}
 				});
 				return callback(err, fileList);
 			}

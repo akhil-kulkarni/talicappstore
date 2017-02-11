@@ -40,11 +40,14 @@ $(function () {
 			$('.progress-bar').text((progress + '%'));
 		},
 		done: function (e, data) {
-			$('.progress-bar').text("Uploaded Successfully!");
-			if(!data.result.success)
-				alert(data.result.msg || "could not upload the file!");
-			else
+			if(!data.result.success){
+				$('.progress-bar').text("Upload Failed!");
+				alert(JSON.stringify(data.result.msg) || "could not upload the file!");
+			}
+			else{
+				$('.progress-bar').text("Uploaded Successfully!");
 				alert("File uploaded successfully!");
+			}
 		},
 		fail: function (e, data) {
 			$('.progress-bar').text("Upload_Failed!");

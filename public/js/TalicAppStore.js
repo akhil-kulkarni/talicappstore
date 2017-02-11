@@ -33,7 +33,7 @@ function downloadFile(type, currEle){
 	}
 	else if(type=="ipa"){
 		var form = $(currEle).closest('form');
-		var sendObj = { "filePath": form.find("input[name='filePath']").val(), "_id": form.find("input[name='_id']").val(), "isipa": true };
+		var sendObj = { "_id": form.find("input[name='_id']").val(), "isipa": true };
 		$.ajax({
 			url: "/download",
 			type: "GET",

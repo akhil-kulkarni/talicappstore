@@ -81,9 +81,9 @@
 							{{else}}
 								<form id={{_id}}>
 									<input type="hidden" name="_id" value="{{_id}}"/>
-									<input type="hidden" name="filePath" value="{{filePath}}"/>
+									{{!-- <input type="hidden" name="filePath" value="{{filePath}}"/> --}}
 									<div class="text-center">
-										<a class="btn btn-danger no-radius ios-icon" onclick="downloadFile('ipa', this)" href={{itms}}>
+										<a class="btn btn-danger no-radius ios-icon" onclick="downloadFile('ipa', this)" href={{filePath}}>
 											<i class="fa fa-apple fa-lg"></i>
 											Download for iOS
 										</a>

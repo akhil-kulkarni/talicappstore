@@ -7,6 +7,7 @@ var fs = require('fs-extra'); //File System - for file manipulation
 var mime = require('mime');
 var modelFunctions = require('./modelFunctions.js');
 var xoauth2 = require('xoauth2');
+var ipaMetadata = require('ipa-metadata');
 
 var commonFunctions = {
 	getLoginModelCount: function(req, callback){
@@ -82,11 +83,7 @@ var commonFunctions = {
 	},
 	updateFilesModel: function(fileData, isDownload, callback){
 		if(!!fileData){
-			if(!isDownload){
-				fileData.fileType = fileData.fileType || this.getFileExt(fileData.fileName);
-				fileData.filePath = fileData.filePath || (constants.uploadsFolderPath + "/" + fileData.fileType + "/");
-			}
-			else{
+			if(!!isDownload && ("filePath" in fileData)){
 				// delete fileData.filePath so as to not overwrite path during download
 				delete fileData.filePath;
 			}
@@ -193,7 +190,7 @@ var commonFunctions = {
 			cc: ccList, // comma separated list or array of receivers
 			subject: (subject || 'Important Announcement!'),
 			//text: 'text', // plaintext body
-			html: (mailContent || '<b>Hello world!</b>') // You can choose to send an HTML body instead
+			html: (mailContent || '<b>Hello!</b>') // You can choose to send an HTML body instead
 		};
 		commonFunctions.getNMTransporter().sendMail(mailOptions, function(error, info){
 			if(error){
@@ -205,6 +202,58 @@ var commonFunctions = {
 				callback(null, info);
 			}
 		});
+	},
+	getFileNameWithoutExt: function(fileName) {
+		if(!!fileName){
+			var flArr = fileName.split(".");
+			fileName = "";
+			for(var i=0; i<(flArr.length-1); i++){
+				fileName += flArr[i];
+			}
+		}
+		return fileName || null;
+	},
+	saveOrUpdatePLISTFile: function(fileData, callback){
+		if(!!fileData && fileData.fileType==="ipa"){
+			console.log("file ipa: " + fileData.filePath + fileData.fileName);
+			ipaMetadata((fileData.filePath + fileData.fileName), function(error, data){
+				if(error){
+					//return callback(error);
+				}
+				console.log("ipa metadata: " + JSON.stringify(data.metadata));
+				data = data.metadata;
+				var plist = constants.plistTemplate;
+				plist = plist.replace("||URL||", (fileData.filePath + fileData.fileName));
+				plist = plist.replace("||BUNDLE_IDENTIFIER||", data.CFBundleIdentifier);
+				plist = plist.replace("||TITLE||", data.CFBundleName);
+				plist = plist.replace("||VERSION_NO||", data.CFBundleVersion);
+				if (!fs.existsSync(constants.uploadsFolderPath)){
+					fs.mkdirSync(constants.uploadsFolderPath);
+				}
+
+				if (!fs.existsSync(constants.uploadsFolderPath + "/ipa")){
+					fs.mkdirSync(constants.uploadsFolderPath + "/ipa");
+				}
+
+				var plistRes = {};
+				plistRes.fileType = "plist";
+				plistRes.fileName = commonFunctions.getFileNameWithoutExt(fileData.fileName) + "." + plistRes.fileType;
+				plistRes.filePath = constants.uploadsFolderPath + "/ipa/";
+				plistRes.fileType = "to download and install the ipa on iOS devices";
+				console.log("plistRes before save: " + JSON.stringify(plist));
+				fs.writeFile(plistRes.filePath + plistRes.fileName, plist, function(err) {
+					if(err) {
+						console.log("error saving plist: " + err);
+						return callback(err);
+					}
+					console.log("plistRes save callback: " + JSON.stringify(plistRes));
+					callback(null, plistRes);
+				});
+			});
+		}
+		else {
+			callback(null, "success");
+		}
 	}
 };
 

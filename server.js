@@ -1,19 +1,13 @@
 var express = require("express");
 var exphbs  = require('express-handlebars');
-
 var mongoose = require('mongoose');
-
 var busboy = require('connect-busboy'); //middleware for form/file upload
-
 var bodyParser = require("body-parser");
-var app = express();
-
 var constants = require('./constants.js');
 var db = require('./models/db.js');
 var commonFunctions = require('./common/commonFunctions.js');
 
-//commonFunctions.printAllFileRecords();
-
+var app = express();
 var config = commonFunctions.config();
 
 app.set('port', (process.env.app_port || 8081));
@@ -36,11 +30,18 @@ app.engine('.hbs', hbs.engine);
 app.set('view engine', '.hbs');
 app.set('views', __dirname + '/views/partials');
 
-console.log("final date test: " + commonFunctions.getDateTimeToSend());
-
-commonFunctions.sendMail('John Cena', "Test Mail", "klkrni.akhil@gmail.com", null, "<b>Hello Again! WWE Rocks...</b>", function(){
-	console.log("send mail callback");
-});
+// commonFunctions.sendMail('John Cena', "Test Mail", "klkrni.akhil@gmail.com", null, "<b>Hello Again! WWE Rocks...</b>", function(){
+// 	console.log("send mail callback");
+// });
+// var ipaData = require('./common/ipa-data.js');
+//
+// ipaData('/public/LifePlanner.ipa', function(err, metadata){
+//   if(err){
+// 	  console.log("ipa err: " + err);
+//     throw err;
+//   }
+//   console.log("metadata: " + metadata);
+// });
 
 app.get('/', function(req, res) {
 	commonFunctions.getFileListWithMetaData(false, function(err, fileRes){
@@ -96,13 +97,30 @@ app.post('/upload', function(req, res) {
 		commonFunctions.saveFile(file, filename, function(resp){
 			console.log("req.body.fileData: " + JSON.stringify(req.body.fileData));
 			if(!!resp && resp.success){
-				commonFunctions.updateFilesModel(req.body.fileData, false, function(err, updateRes){
-					if(err){
-						console.log("updateFilesModel err: " + err);
-						res.json({success: false, msg: err});
-					}
-					res.json({success: true, msg: "upload success"});
-				});
+				if(!!req.body.fileData){
+					req.body.fileData.fileType = req.body.fileData.fileType || commonFunctions.getFileExt(req.body.fileData.fileName);
+					req.body.fileData.filePath = req.body.fileData.filePath || (constants.uploadsFolderPath + "/" + req.body.fileData.fileType + "/");
+					commonFunctions.saveOrUpdatePLISTFile(req.body.fileData, function(error, plistRes){
+						if(error){
+							res.json({success: false, msg: error});
+						}
+						else{
+							 if(!!plistRes && plistRes!=="success"){
+								 //ipa file
+								req.body.fileData.dependencies = plistRes;
+							}
+							commonFunctions.updateFilesModel(req.body.fileData, false, function(err, updateRes){
+								if(err){
+									console.log("updateFilesModel err: " + err);
+									res.json({success: false, msg: err});
+								}
+								else{
+									res.json({success: true, msg: "upload success"});
+								}
+							});
+						}
+					});
+				}
 			}
 			else{
 				res.json(resp);
