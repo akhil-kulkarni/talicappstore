@@ -6,6 +6,7 @@ var path = require('path'); //used for file path
 var fs = require('fs-extra'); //File System - for file manipulation
 var mime = require('mime');
 var modelFunctions = require('./modelFunctions.js');
+var xoauth2 = require('xoauth2');
 
 var commonFunctions = {
 	getLoginModelCount: function(req, callback){
@@ -179,8 +180,10 @@ var commonFunctions = {
 	},
 	getNMTransporter: function(){
 		return nodemailer.createTransport({
-			service: 'Gmail',
-			auth: constants.oAuth2Config
+			service: 'gmail',
+			auth: {
+				xoauth2: xoauth2.createXOAuth2Generator(constants.oAuth2Config)
+			}
 		});
 	},
 	sendMail: function(from, subject, mailingList, ccList, mailContent, callback){
