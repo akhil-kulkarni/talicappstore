@@ -42,26 +42,22 @@ var userSession;
 
 app.get('/', function(req, res) {
 	userSession = req.session;
-	commonFunctions.getFileListWithMetaData(false, function(err, fileRes){
-		console.log("fileRes: " + JSON.stringify(fileRes));
-		if(!!err){
-			fileRes = {};
-			fileRes.loggedInAs = userSession.username || null;
-		}
+	var fileRes = {};
+	commonFunctions.getFileListWithMetaData(false, function(err, filesArr){
+		console.log("fileRes: " + JSON.stringify(filesArr));
 		fileRes.loggedInAs = userSession.username || null;
+		fileRes.files = filesArr || null;
 		res.render('TalicAppStore', {"file": fileRes});
 	});
 });
 
 app.get('/prod', function(req, res) {
 	userSession = req.session;
-	commonFunctions.getFileListWithMetaData(true, function(err, fileRes){
-		console.log("fileRes: " + JSON.stringify(fileRes));
-		if(!!err){
-			fileRes = {};
-			fileRes.loggedInAs = userSession.username || null;
-		}
+	var fileRes = {};
+	commonFunctions.getFileListWithMetaData(true, function(err, filesArr){
+		console.log("fileRes: " + JSON.stringify(filesArr));
 		fileRes.loggedInAs = userSession.username || null;
+		fileRes.files = filesArr || null;
 		res.render('TalicAppStore', {"file": fileRes});
 	});
 });
