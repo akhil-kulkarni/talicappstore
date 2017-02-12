@@ -41,30 +41,28 @@ var userSession;
 // });
 
 app.get('/', function(req, res) {
+	userSession = req.session;
 	commonFunctions.getFileListWithMetaData(false, function(err, fileRes){
 		console.log("fileRes: " + JSON.stringify(fileRes));
 		if(!!err){
-			res.render('TalicAppStore', {"file": null});
-		}
-		else{
-			userSession = req.session;
+			fileRes = {};
 			fileRes.loggedInAs = userSession.username || null;
-			res.render('TalicAppStore', {"file": fileRes});
 		}
+		fileRes.loggedInAs = userSession.username || null;
+		res.render('TalicAppStore', {"file": fileRes});
 	});
 });
 
 app.get('/prod', function(req, res) {
+	userSession = req.session;
 	commonFunctions.getFileListWithMetaData(true, function(err, fileRes){
 		console.log("fileRes: " + JSON.stringify(fileRes));
 		if(!!err){
-			res.render('TalicAppStore', {"file": null});
-		}
-		else{
-			userSession = req.session;
+			fileRes = {};
 			fileRes.loggedInAs = userSession.username || null;
-			res.render('TalicAppStore', {"file": fileRes});
 		}
+		fileRes.loggedInAs = userSession.username || null;
+		res.render('TalicAppStore', {"file": fileRes});
 	});
 });
 
