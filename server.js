@@ -159,7 +159,7 @@ app.post('/upload', function(req, res) {
 });
 
 app.get("/download", function(req, res){
-	var file = req.query.filePath;
+	var file = req.query;
 	console.log("req.body.filePath: " + JSON.stringify(req.query));
 	if(!!file){
 		commonFunctions.updateFilesModel(req.query, true, function(err, msg){
