@@ -1,17 +1,3 @@
-var fileData = {
-	"_id": null,
-	"fileName": null,
-	"fileSize": null,
-	"fileCreatedBy": null,
-	"fileUpdatedBy": null,
-	"projectName": null,
-	"appVersionNumber": null,
-	"changeLog": null,
-	"doNotDelete": false,
-	"password": null,
-	"isProduction": false
-};
-
 $(function () {
 	$('#selectFile').fileupload({
 		dataType: 'json',
@@ -25,11 +11,15 @@ $(function () {
 			);
 			data.context = $('#uploadBtn').click(
 				function(){
-					data.formData = {
-						"fileData": JSON.stringify(getFinalFileData())
-					};
-					console.log(data);
-					data.submit();
+					if(!$('#projectName').val()){
+						alert("Please enter a project name.");
+					}else{
+						data.formData = {
+							"fileData": JSON.stringify(getFinalFileData())
+						};
+						console.log(data);
+						data.submit();
+					}
 					$("#uploadBtn").off("click");
 				}
 			);
@@ -58,8 +48,12 @@ $(function () {
 });
 
 function getFinalFileData(){
-	if(!!fileData){
-		if(!fileData.fileCreatedBy){
+	// if(!!fileData){
+	var fileData = {};
+		if(!!$('#_id').val()){
+			fileData._id = $('#_id').val();
+		}
+		if(!$('#fileCreatedBy').val()){
 			fileData.fileCreatedBy = (($('#uploaderName').val()||"").trim()) || null;
 		}
 		else{
@@ -71,10 +65,12 @@ function getFinalFileData(){
 		if(!!fileData.changeLog){
 			fileData.changeLog = fileData.changeLog.split("\n").join("|");
 		}
+		fileData.totalDownloads = 0;
+		fileData.lastDownloadedOn = null;
 		fileData.doNotDelete = $('#doNotDelete').prop('checked');
 		fileData.isProduction = $('#isProduction').prop('checked');
 		fileData.password = ____trI343fjjdl(fileData.fileName, ((($('#password').val()||"").trim()) || null));
-	}
+	// }
 	return fileData;
 }
 
@@ -111,3 +107,43 @@ $(document).on('change', '#selectFile', function(e){
 	fileData.fileName = selectedFile.name;
 	fileData.fileSize = selectedFile.size;
 });
+
+$(document).on('show.bs.collapse', '.collapse', function(event) {
+	$('.collapse.in').collapse('hide');
+});
+
+function showUploadBox(){
+	$('#addBtn i').removeClass('fa-plus').addClass('fa-close');
+	$('#addBtn').removeClass('btn-success').addClass('btn-danger');
+	$('#_id').val(null);
+	$('#fileCreatedBy').val(null);
+	$('#uploadForm')[0].reset();
+	$('#uploadBox').show();
+}
+
+function hideUploadBox(){
+	$('#addBtn i').removeClass('fa-close').addClass('fa-plus');
+	$('#addBtn').removeClass('btn-danger').addClass('btn-success');
+	$('#uploadBox').hide();
+	$('#_id').val(null);
+	$('#fileCreatedBy').val(null);
+	$('#uploadForm')[0].reset();
+}
+
+$(document).on('click', '#addBtn', function(){
+	if($('#addBtn i').hasClass('fa-plus')){
+		showUploadBox();
+	}
+	else{
+		hideUploadBox();
+	}
+});
+
+function updateBuild(file){
+	hideUploadBox();
+	showUploadBox();
+	$('#projectName').val(file.projectName);
+	$('#_id').val(file._id);
+	$('#fileCreatedBy').val(file.fileCreatedBy);
+	$('#projectName').prop('disabled', true);
+}

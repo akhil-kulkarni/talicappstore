@@ -235,7 +235,7 @@ var commonFunctions = {
 				plistRes.fileType = "plist";
 				plistRes.fileName = commonFunctions.getFileNameWithoutExt(fileData.fileName) + "." + plistRes.fileType;
 				plistRes.filePath = commonFunctions.config().siteURL + "/uploads/ipa/";
-				plistRes.fileType = "to download and install the ipa on iOS devices";
+				plistRes.filePurpose = "to download and install the ipa on iOS devices";
 				fs.writeFile(filePathForSaving + plistRes.fileName, plist, function(err) {
 					if(err) {
 						console.log("error saving plist: " + err);

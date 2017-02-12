@@ -18,8 +18,9 @@ app.use(express.static(__dirname + '/public'));
 
 var hbs = exphbs.create({
 	helpers: {
-		json: function(val){ console.log("JSON helper: " + val); return JSON.stringify(val);},
-		ifcond: function(v1, operator, v2, itms, options){return commonFunctions.ifCondHelper(v1, operator, v2, itms, options);}
+		json: function(val){ return JSON.stringify(val);},
+		inc: function(val){ return parseInt(val) + 1; },
+		trclr: function(val){ return ((val%2===0)?"info":"active"); }
 	},
 	defaultLayout: 'main',
 	layoutsDir:  __dirname + '/views/layouts',
@@ -32,15 +33,6 @@ app.set('views', __dirname + '/views/partials');
 
 // commonFunctions.sendMail('John Cena', "Test Mail", "klkrni.akhil@gmail.com", null, "<b>Hello Again! WWE Rocks...</b>", function(){
 // 	console.log("send mail callback");
-// });
-// var ipaData = require('./common/ipa-data.js');
-//
-// ipaData('/public/LifePlanner.ipa', function(err, metadata){
-//   if(err){
-// 	  console.log("ipa err: " + err);
-//     throw err;
-//   }
-//   console.log("metadata: " + metadata);
 // });
 
 app.get('/', function(req, res) {
@@ -55,8 +47,27 @@ app.get('/', function(req, res) {
 	});
 });
 
+app.get('/prod', function(req, res) {
+	commonFunctions.getFileListWithMetaData(true, function(err, fileRes){
+		console.log("fileRes: " + JSON.stringify(fileRes));
+		if(!!err){
+			res.render('TalicAppStore', {"file": null});
+		}
+		else{
+			res.render('TalicAppStore', {"file": fileRes});
+		}
+	});
+});
+
 app.get('/devConsole', function(req, res) {
-	res.render('devConsole');
+	commonFunctions.getFileListWithMetaData(null, function(err, fileRes){
+		if(!!err){
+			res.render('devConsole', {"file": null});
+		}
+		else{
+			res.render('devConsole', {"file": fileRes});
+		}
+	});
 });
 
 app.post("/login", function(req, res){

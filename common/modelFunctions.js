@@ -24,7 +24,7 @@ var modelFunctions = {
 					});
 				}
 				else {
-					filesModel.findOne({_id: fileData._id}, 'fileVersionNumber changeLog', function(err, file){
+					filesModel.findOne({_id: fileData._id}, 'fileVersionNumber changeLog fileCreatedOn', function(err, file){
 						if(err){
 							return callback(err);
 						}
@@ -36,6 +36,10 @@ var modelFunctions = {
 						console.log("final changelog: " + fileChangeLog);
 						fileChangeLog.push({fileVersionNumber: fileData.fileVersionNumber, changeLog: changeLog});
 						fileData.changeLog = fileChangeLog;
+						if(!!file.fileCreatedOn)
+							fileData.fileUpdatedOn = new Date();
+						console.log("\n\nfile.fileCreatedOn: " + file.fileCreatedOn);
+						console.log("fileData.fileUpdatedOn: " + fileData.fileUpdatedOn);
 						filesModel.update({_id: fileData._id}, fileData, callback);
 					});
 				}
@@ -53,7 +57,11 @@ var modelFunctions = {
 		}
 	},
 	getFileListWithMetaData: function(isProduction, __getDateTimeToSend, __getFileSizeReadable, callback){
-		filesModel.find({isProduction: isProduction, fileDeletedOn: null}).select('fileName fileType filePath fileSize fileVersionNumber projectName appVersionNumber fileCreatedBy fileUpdatedBy fileCreatedOn fileUpdatedOn changeLog dependencies totalDownloads lastDownloadedOn').sort('-fileUpdatedOn').exec(function(err, files){
+		var whereObj = {fileDeletedOn: null};
+		if(isProduction!==undefined && isProduction!==null){
+			whereObj.isProduction = isProduction;
+		}
+		filesModel.find(whereObj).select('fileName fileType filePath fileSize fileVersionNumber projectName appVersionNumber fileCreatedBy fileUpdatedBy fileCreatedOn fileUpdatedOn changeLog dependencies totalDownloads lastDownloadedOn doNotDelete isProduction').sort('-fileUpdatedOn').exec(function(err, files){
 			if(!!err){
 				return callback(err);
 			}
@@ -61,10 +69,17 @@ var modelFunctions = {
 			if(!!fileList && fileList.length>0){
 				fileList.forEach(function(file){
 					console.log("file: " + JSON.stringify(file));
-					file.changeLog = (file.changeLog).filter(function(fl){
-						return (fl.fileVersionNumber==file.fileVersionNumber);
-					});
-					file.changeLog = (file.changeLog[0].changeLog).split("|");
+					if(!!file.changeLog && file.changeLog.length>0){
+						file.changeLog = (file.changeLog).filter(function(fl){
+							return (fl.fileVersionNumber==file.fileVersionNumber);
+						});
+						if(!!file.changeLog[0].changeLog && file.changeLog[0].changeLog!={}){
+							file.changeLog = (file.changeLog[0].changeLog).split("|");
+						}
+						else {
+							file.changeLog = null;
+						}
+					}
 					if(!!file.fileCreatedOn)
 						file.fileCreatedOn = __getDateTimeToSend(file.fileCreatedOn, true);
 					if(!!file.fileUpdatedOn)
@@ -77,7 +92,6 @@ var modelFunctions = {
 						file.fileSize = file.fileSize.size + " " + file.fileSize.unit;
 					}
 					file.filePath += file.fileName;
-					file.itms = "itms-services://?action=download-manifest&amp;url=https://lp.tataaia.com/Insight-Info.plist";
 					file.isapk = true;
 					if(file.fileType=='ipa' && !!file.dependencies){
 						file.isapk = false;

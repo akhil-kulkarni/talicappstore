@@ -5,30 +5,138 @@
 </div>
 <div class="container">
 	<div class="products">
-		<div style="border: 1px solid #1a2c44; border-radius: 5px;">
-			<div class="container-fluid">
-				<div class="row">
+		<div class="container-fluid">
+			<div class="row table-responsive" style="border: 1px solid #1a2c44; border-radius: 5px">
+				<table class="table">
+					<thead style="background: #3276b1; color: #fff; cursor: default; font-weight: bold;">
+						<tr>
+							<th>sr no.</th>
+							<th>file name</th>
+							<th>project name</th>
+							<th>version no.</th>
+							<th>uploaded by</th>
+							<th>uploaded on</th>
+							<th>is production?</th>
+							<th>size</th>
+							<th>action</th>
+						</tr>
+					</thead>
+					<tbody>
+						{{#if file}}
+							{{#each file}}
+						<tr class="accordion-toggle {{trclr @index}}">
+							<td data-toggle="collapse" data-target="#file{{inc @index}}" >{{inc @index}}</td>
+							<td data-toggle="collapse" data-target="#file{{inc @index}}" >{{fileName}}</td>
+							<td data-toggle="collapse" data-target="#file{{inc @index}}" >{{projectName}}</td>
+							<td data-toggle="collapse" data-target="#file{{inc @index}}" >{{appVersionNumber}}</td>
+							<td data-toggle="collapse" data-target="#file{{inc @index}}" >{{#if fileUpdatedBy}} {{fileUpdatedBy}} {{else}} {{fileCreatedBy}}{{/if}}</td>
+							<td data-toggle="collapse" data-target="#file{{inc @index}}" >{{#if fileUpdatedOn}} {{fileUpdatedOn}} {{else}} {{fileCreatedOn}}{{/if}}</td>
+							<td data-toggle="collapse" data-target="#file{{inc @index}}" >{{#if isProduction}} Yes {{else}} No {{/if}}</td>
+							<td data-toggle="collapse" data-target="#file{{inc @index}}" >{{fileSize}}</td>
+							<td>
+								<button type="button" class="btn btn-danger btn-sm" onclick="updateBuild({{json this}})">
+									<i class="fa fa-repeat"></i>
+									<span> update build</span>
+								</button>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="12" class="hiddenRow danger" style="padding: 0px; border-top: none;">
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 accordian-body collapse" id="file{{inc @index}}" style="border-top: 1px solid #ddd;">
+									<div class="row" style="padding:10px;">
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+											<div><b>Project Name:</b> {{projectName}}</div>
+										</div>
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+											<div><b>File Name:</b> {{fileName}}</div>
+										</div>
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+											<div><b>App Version No.:</b> {{appVersionNumber}}</div>
+										</div>
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+											<div><b>File Size:</b> {{fileSize}}</div>
+										</div>
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+											<div><b>Created By:</b> {{fileCreatedBy}}</div>
+										</div>
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+											<div><b>Created On:</b> {{fileCreatedOn}}</div>
+										</div>
+										{{#if fileUpdatedOn}}
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+											<div><b>Updated By:</b> {{fileUpdatedBy}}</div>
+										</div>
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+											<div><b>Updated On:</b> {{fileUpdatedOn}}</div>
+										</div>
+										{{/if}}
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+											<div><b>Total Downloads:</b> {{totalDownloads}}</div>
+										</div>
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+											<div><b>Last Downloaded On:</b> {{#if fileUpdatedBy}} {{lastDownloadedOn}} {{else}} Never... hahaha {{/if}}</div>
+										</div>
+									</div>
+									{{#if dependencies}}
+									<div class="row" style="padding:10px;">
+										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+											<b>Dependencies: </b>
+										</div>
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding-top: 5px;">
+											<b>File Name: </b> {{dependencies.fileName}}
+										</div>
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding-top: 5px;">
+											<b>File Purpose: </b> {{dependencies.filePurpose}}
+										</div>
+									</div>
+									{{/if}}
+									<div class="row" style="padding:10px;">
+										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+											<b>Change Log: </b>{{#if changeLog}}{{else}}Not available{{/if}}
+										</div>
+										{{#if changeLog}}
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+											<ol>
+											{{#each changeLog}}
+												<li>{{this}}</li>
+											{{/each}}
+											</ol>
+										</div>
+										{{/if}}
+									</div>
+								</div>
+							</td>
+						</tr>
+						{{/each}}
+						{{/if}}
+					</tbody>
+				</table>
+			</div>
+
+			<div id="uploadBox" class="row" style="display: none; background: #dff0d8; border: 1px solid #1a2c44; margin-top: 20px; border-radius: 5px;">
+				<form id="uploadForm">
 					<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
 						<div class="row" style="padding: 10px;">
-							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 								<input type="text" id="uploaderName" placeholder="uploader name"/>
 							</div>
-							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 								<input type="text" id="appVersionNumber" placeholder="app version number"/>
 							</div>
-							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 								<input type="password" id="password" placeholder="password"/>
 							</div>
 						</div>
 						<div class="row" style="padding: 10px;">
-							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 								<input type="text" id="projectName" placeholder="project name"/>
 							</div>
-							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
-								<input type="checkbox" id="doNotDelete"/> do not delete
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
+								<label style="margin-top: 5px;"><input type="checkbox" id="doNotDelete" style="height: 20px; width: 20px; padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;"/> do not delete</label>
 							</div>
-							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
-								<input type="checkbox" id="isProduction"/> is production?
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
+								<label style="margin-top: 5px;">
+								<input type="checkbox" id="isProduction" style="height: 20px; width: 20px; padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;"/> is production?</label>
 							</div>
 						</div>
 						<div class="row" style="padding: 10px;">
@@ -39,35 +147,36 @@
 					</div>
 					<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
 						<div class="row" style="padding: 10px;">
-							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+							<input type="hidden" id="_id"/><input type="hidden" id="fileCreatedBy"/>
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 								<span class="btn btn-success fileinput-button">
-									<i class="glyphicon glyphicon-plus"></i>
+									<i class="fa fa-plus"></i>
 									<span>add file</span>
 									<input type="file" name="fileTest" id="selectFile" data-url="/upload" accept=".ipa, .apk"/>
 								</span>
 							</div>
-							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 								<button id="uploadBtn" type="button" class="btn btn-primary start">
-									<i class="glyphicon glyphicon-upload"></i>
+									<i class="fa fa-upload"></i>
 									<span>start upload</span>
 								</button>
 							</div>
-							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 								<button id="cancelUpload" type="button" class="btn btn-warning cancel">
-									<i class="glyphicon glyphicon-ban-circle"></i>
+									<i class="fa fa-close"></i>
 									<span>cancel upload</span>
 								</button>
 							</div>
 						</div>
 						<div class="row upload-file" style="padding: 10px;">
-							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 								<p id="fileName" class="name">File Name</p>
 								<strong class="error text-danger"></strong>
 							</div>
-							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 								<p id="fileSize" class="size">Processing...</p>
 							</div>
-							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 								<div class="progress">
 									<div class="progress-bar progress-bar-success progress-bar-striped active" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:0%;" role="progressbar"></div>
 								</div>
@@ -77,13 +186,11 @@
 							<div style="font-size: 8pt; color:red">* if <b> do not delete </b> is unchecked then the file will be automatically deleted after <b>10 days</b>.</div>
 						</div>
 					</div>
-				</div>
-			</div>
-			<div style="padding: 10px; display: none;">
-				<form method="GET" enctype="multipart/form-data" action="/download">
-					<input type="submit" value="Download"/>
 				</form>
 			</div>
+			<button id="addBtn" class="btn btn-success">
+				<i class="fa fa-plus fa-lg"></i>
+			</button>
 		</div>
 	</div>
 </div>
