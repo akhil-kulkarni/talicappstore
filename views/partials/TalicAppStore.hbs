@@ -25,25 +25,39 @@
 			<h4>Talic App Store</h4>
 		</div>
 		<div class="top-head-div">
-			<div class="loginAsDiv">
-				<h4>login as: </h4>
-			</div>
-			<div class="loginFormWrapper">
-				<div>
-					<select id="username" name="username">
-						<option value="dev">developer</option>
-						<option value="admin">admin</option>
-					</select>
+				{{#if file}}
+				{{#if file.loggedInAs}}
+				<a style="text-decoration: none; color: white;" href="/devConsole"><div style="padding-left: 10px; display: inline-block;">
+					dev console
+				</div></a>
+					<div style="padding-left: 10px; display: inline-block;">
+						<button type="button" class="btn btn-danger btn-sm" onclick="logout()">
+							<span>Logout</span>
+						</button>
+					</div>
+				{{else}}
+				<div class="loginAsDiv">
+					<h4>login as: </h4>
 				</div>
-				<div>
-					<input id="password" name="password" type="password" value="Tata_001" placeholder="Password"/>
-				</div>
-				<div>
-					<button type="button" class="btn btn-danger btn-sm" onclick="loginFormSubmit()">
-						<span>Login</span>
-					</button>
-				</div>
-			</div>
+				<div class="loginFormWrapper">
+					<div>
+						<select id="username" name="username">
+							<option value="dev">developer</option>
+							<option value="admin">admin</option>
+						</select>
+					</div>
+					<div>
+						<input id="password" name="password" type="password" value="Tata_001" placeholder="Password"/>
+					</div>
+					<div>
+						<button type="button" class="btn btn-danger btn-sm" onclick="loginFormSubmit()">
+							<span>Login</span>
+						</button>
+					</div>
+					</div>
+				{{/if}}
+				{{/if}}
+
 		</div>
 	</div>
 </form>

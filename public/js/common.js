@@ -8,3 +8,23 @@ function ____trI343fjjdl(poiu, qwerty){
 	}
 	return null;
 }
+
+function logout(){
+	$.ajax({
+		url: '/logout',
+		type: "GET",
+		success: function(res){
+			if(!!res){
+				if(!!res.error){
+					alert(res.msg);
+				}
+				else{
+					window.location.reload();
+				}
+			}
+			else{
+				alert("Could not login!");
+			}
+		}
+	});
+}

@@ -1,5 +1,6 @@
 var express = require("express");
 var exphbs  = require('express-handlebars');
+var session = require('express-session');
 var mongoose = require('mongoose');
 var busboy = require('connect-busboy'); //middleware for form/file upload
 var bodyParser = require("body-parser");
@@ -31,6 +32,10 @@ app.engine('.hbs', hbs.engine);
 app.set('view engine', '.hbs');
 app.set('views', __dirname + '/views/partials');
 
+app.use(session({"secret": config.sessionSecret}));
+
+var userSession;
+
 // commonFunctions.sendMail('John Cena', "Test Mail", "klkrni.akhil@gmail.com", null, "<b>Hello Again! WWE Rocks...</b>", function(){
 // 	console.log("send mail callback");
 // });
@@ -42,6 +47,8 @@ app.get('/', function(req, res) {
 			res.render('TalicAppStore', {"file": null});
 		}
 		else{
+			userSession = req.session;
+			fileRes.loggedInAs = userSession.username || null;
 			res.render('TalicAppStore', {"file": fileRes});
 		}
 	});
@@ -54,20 +61,29 @@ app.get('/prod', function(req, res) {
 			res.render('TalicAppStore', {"file": null});
 		}
 		else{
+			userSession = req.session;
+			fileRes.loggedInAs = userSession.username || null;
 			res.render('TalicAppStore', {"file": fileRes});
 		}
 	});
 });
 
 app.get('/devConsole', function(req, res) {
-	commonFunctions.getFileListWithMetaData(null, function(err, fileRes){
-		if(!!err){
-			res.render('devConsole', {"file": null});
-		}
-		else{
-			res.render('devConsole', {"file": fileRes});
-		}
-	});
+	userSession = req.session;
+	if(!!userSession.username){
+		commonFunctions.getFileListWithMetaData(null, function(err, fileRes){
+			if(!!err){
+				res.render('devConsole', {"file": null});
+			}
+			else{
+				fileRes.loggedInAs = userSession.username;
+				res.render('devConsole', {"file": fileRes});
+			}
+		});
+	}
+	else{
+		res.redirect('/');
+	}
 });
 
 app.post("/login", function(req, res){
@@ -80,6 +96,8 @@ app.post("/login", function(req, res){
 						res.json({error: true, msg: "User does not exist!"});
 					}
 					if(count===1){
+						userSession = req.session;
+						userSession.username = req.body.username;
 						res.json({error: false, render: "devConsole"});
 					}
 					else{
@@ -165,6 +183,16 @@ app.get("/download", function(req, res){
 	}
 });
 
+app.get('/logout',function(req,res){
+	req.session.destroy(function(err) {
+		if(err) {
+			console.log(err);
+		}
+		else {
+			res.redirect('/');
+		}
+	});
+});
 app.listen(app.get('port'), function() {
 	console.log('Node app is running on port', app.get('port'));
 });

@@ -1,7 +1,22 @@
 <link href="css/jquery.fileupload.css" rel="stylesheet">
 <link href="css/jquery.fileupload-ui.css" rel="stylesheet">
 <div class="top-head">
-	<h4 class="text-center">developer console</h4>
+	<div style="float: left">
+		<h4 class="text-left">developer console</h4>
+	</div>
+	<div style="float: right">
+		<a style="text-decoration: none; color: white;" href="/"><div style="padding-left: 10px; display: inline-block;">
+			uat app store
+		</div></a>
+		<a style="text-decoration: none; color: white;" href="/prod"><div style="padding-left: 10px; display: inline-block;">
+			prod app store
+		</div></a>
+		<div style="padding-left: 10px; display: inline-block;">
+			<button type="button" class="btn btn-danger btn-sm" onclick="logout()">
+				<span>Logout</span>
+			</button>
+		</div>
+	</div>
 </div>
 <div class="container">
 	<div class="products">

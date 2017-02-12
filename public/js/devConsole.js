@@ -160,3 +160,13 @@ function updateBuild(file){
 	$('#fileSize').val(file.fileSize);
 	$('#projectName').prop('disabled', true);
 }
+
+$(document).on('change', '#isProduction', function(){
+	if($('#isProduction').prop('checked')){
+		$('#doNotDelete').prop('checked', true);
+		$('#doNotDelete').prop('disabled', true);
+	}
+	else{
+		$('#doNotDelete').prop('disabled', false);
+	}
+});
