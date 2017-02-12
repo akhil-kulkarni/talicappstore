@@ -36,7 +36,7 @@ $(function () {
 			}
 			else{
 				$('.progress-bar').text("Uploaded Successfully!");
-				alert("File uploaded successfully!");
+				if(!alert("File uploaded successfully!")){window.location.reload();}
 			}
 		},
 		fail: function (e, data) {
@@ -58,6 +58,12 @@ function getFinalFileData(){
 		}
 		else{
 			fileData.fileUpdatedBy = (($('#uploaderName').val()||"").trim()) || null;
+		}
+		if(!!$('#fileName').val()){
+			fileData.fileName = (($('#fileName').val()||"").trim()) || null;
+		}
+		if(!!$('#fileSize').val()){
+			fileData.fileSize = (($('#fileSize').val()||"").trim()) || "";
 		}
 		fileData.projectName = (($('#projectName').val()||"").trim()) || null;
 		fileData.appVersionNumber = (($('#appVersionNumber').val()||"").trim()) || null;
@@ -104,8 +110,8 @@ $(document).on('change', '#selectFile', function(e){
 	$('.progress-bar').css('width', (0 + '%'));
 	$('.progress-bar').text('');
 	$('.upload-file').show();
-	fileData.fileName = selectedFile.name;
-	fileData.fileSize = selectedFile.size;
+	$('#fileName').val(selectedFile.name);
+	$('#fileSize').val(selectedFile.size);
 });
 
 $(document).on('show.bs.collapse', '.collapse', function(event) {
@@ -117,6 +123,8 @@ function showUploadBox(){
 	$('#addBtn').removeClass('btn-success').addClass('btn-danger');
 	$('#_id').val(null);
 	$('#fileCreatedBy').val(null);
+	$('#fileName').val(null);
+	$('#fileSize').val(null);
 	$('#uploadForm')[0].reset();
 	$('#uploadBox').show();
 }
@@ -127,12 +135,15 @@ function hideUploadBox(){
 	$('#uploadBox').hide();
 	$('#_id').val(null);
 	$('#fileCreatedBy').val(null);
+	$('#fileName').val(null);
+	$('#fileSize').val(null);
 	$('#uploadForm')[0].reset();
 }
 
 $(document).on('click', '#addBtn', function(){
 	if($('#addBtn i').hasClass('fa-plus')){
 		showUploadBox();
+		$('#projectName').prop('disabled', false);
 	}
 	else{
 		hideUploadBox();
@@ -145,5 +156,7 @@ function updateBuild(file){
 	$('#projectName').val(file.projectName);
 	$('#_id').val(file._id);
 	$('#fileCreatedBy').val(file.fileCreatedBy);
+	$('#fileName').val(file.fileName);
+	$('#fileSize').val(file.fileSize);
 	$('#projectName').prop('disabled', true);
 }
