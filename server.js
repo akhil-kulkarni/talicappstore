@@ -20,7 +20,7 @@ app.use(express.static(__dirname + '/public'));
 var hbs = exphbs.create({
 	helpers: {
 		json: function(val){ return JSON.stringify(val);},
-		inc: function(val){ return parseInt(val) + 1; },
+		paddedInc: function(val){ var pi = parseInt(val) + 1; if(pi<10) return "0"+pi; else return pi+"";},
 		trclr: function(val){ return ((val%2===0)?"info":"active"); }
 	},
 	defaultLayout: 'main',
@@ -33,6 +33,13 @@ app.set('view engine', '.hbs');
 app.set('views', __dirname + '/views/partials');
 
 app.use(session({"secret": config.sessionSecret}));
+
+app.use(function(req, res, next) {
+	res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+	res.header('Expires', '-1');
+	res.header('Pragma', 'no-cache');
+	next();
+});
 
 var userSession;
 
@@ -135,10 +142,25 @@ app.post('/upload', function(req, res) {
 							commonFunctions.updateFilesModel(req.body.fileData, false, function(err, updateRes){
 								if(err){
 									console.log("updateFilesModel err: " + err);
-									res.json({success: false, msg: err});
 								}
 								else{
-									res.json({success: true, msg: "upload success"});
+									files = [{},{}];
+									files[0]._id = updateRes;
+									files[0].fileName = req.body.fileData.fileName;
+									files[0].filePath = req.body.fileData.filePath;
+									if(req.body.fileData.fileType==="ipa"){
+										files[1].fileName = req.body.fileData.dependencies.fileName;
+										//using the ipa file path instead of dependencies path as the dependencies path will have the site url in it instead of the actual location of the file.
+										files[1].filePath = req.body.fileData.filePath;
+									}
+									commonFunctions.moveFiles(files, function(err, msg){
+										if(!!err){
+											res.json({success: false, msg: err});
+										}
+										else{
+											res.json({success: true, msg: "upload success"});
+										}
+									});
 								}
 							});
 						}
@@ -151,6 +173,7 @@ app.post('/upload', function(req, res) {
 		});
 	});
 	req.busboy.on('field', function(fieldname, val) {
+		console.log("field: ");
 		req.body[fieldname] = JSON.parse(val);
 	});
 	req.busboy.on('finish', function(){
@@ -160,18 +183,20 @@ app.post('/upload', function(req, res) {
 
 app.get("/download", function(req, res){
 	var file = req.query;
-	console.log("req.body.filePath: " + JSON.stringify(req.query));
+	console.log("req.body.filePath: " + JSON.stringify(req.query.filePath));
 	if(!!file){
-		commonFunctions.updateFilesModel(req.query, true, function(err, msg){
+		commonFunctions.updateFilesModel(JSON.parse(JSON.stringify(req.query)), true, function(err, msg){
 			if(!!err){
 				console.log("error updating download file details: " + err);
 				res.json({"success": false, "err": "Unable to download file!"});
 			}
-			if(!req.query.isipa){
-				commonFunctions.downloadFile(file, res);
-			}
 			else{
-				res.json({"success": true});
+				if(!req.query.isipa){
+					commonFunctions.downloadFile(req.query.filePath, res);
+				}
+				else{
+					res.json({"success": true});
+				}
 			}
 		});
 	}

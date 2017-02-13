@@ -7,6 +7,7 @@ var filesSchema = new mongoose.Schema({
 	fileType: String,
 	fileVersionNumber: {type: Number, default: 1},
 	projectName: String,
+	projectDesc: String,
 	appVersionNumber: String, // user input
 	fileCreatedBy: String,
 	fileUpdatedBy: String,
@@ -17,6 +18,8 @@ var filesSchema = new mongoose.Schema({
 	changeLog: [{
 		fileVersionNumber: {type: Number, default: 1},
 		fileCreatedOn: {type: Date, default: Date.now},
+		lastDownloadedOn: Date,
+		totalDownloads: {type: Number, default: 0},
 		changeLog: String // user input
 	}],
 	lastDownloadedOn: Date,

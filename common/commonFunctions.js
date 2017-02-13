@@ -151,6 +151,7 @@ var commonFunctions = {
 		return finalString;
 	},
 	downloadFile: function(file, res){
+		console.log("file: " + file);
 		var filename = path.basename(file);
 		var mimetype = mime.lookup(file);
 		console.log("mimetype: " + mimetype);
@@ -247,6 +248,53 @@ var commonFunctions = {
 		}
 		else {
 			callback(null, "success");
+		}
+	},
+	moveFiles: function(files, callback){
+		if(!!files && files.length>0){
+			if (!fs.existsSync(files[0].filePath + files[0]._id)){
+				console.log("making dir: " + files[0].filePath + files[0]._id);
+				fs.mkdirSync(files[0].filePath + files[0]._id);
+			}
+			var srcFile = fs.createReadStream(files[0].filePath + files[0].fileName);
+			var destFile = fs.createWriteStream(files[0].filePath + files[0]._id + "/" + files[0].fileName);
+			srcFile.pipe(destFile);
+
+			srcFile.on('end', function() {
+				console.log("file copied successfully");
+				fs.exists(files[0].filePath + files[0].fileName, function(exists) {
+					if(exists) {
+						//Show in green
+						fs.unlink(files[0].filePath + files[0].fileName);
+					} else {
+						//Show in red
+						console.log('File not found, so not deleting.');
+					}
+				});
+				if(!!files[1] && !!files[1].filePath){
+					console.log("srcFilePl: " + files[1].filePath + files[1].fileName);
+					var srcFilePl = fs.createReadStream(files[1].filePath + files[1].fileName);
+					var destFilePl = fs.createWriteStream(files[1].filePath + files[0]._id + "/" + files[1].fileName);
+					srcFilePl.pipe(destFilePl);
+					srcFilePl.on('end', function() {
+						fs.exists(files[1].filePath + files[1].fileName, function(exists) {
+							if(exists) {
+								//Show in green
+								fs.unlink(files[1].filePath + files[1].fileName);
+							} else {
+								//Show in red
+								console.log('File not found, so not deleting.');
+							}
+						});
+						callback(false, "file copy successful!");
+					});
+					srcFilePl.on('error', function(err) { callback(true, "file copy failed!"); });
+				}
+				else{
+					callback(false, "file copy successful!");
+				}
+			});
+			srcFile.on('error', function(err) { console.log("file upload failed: " + err); callback(true, "file copy failed!"); });
 		}
 	}
 };

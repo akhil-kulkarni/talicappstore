@@ -3,24 +3,25 @@ $(function () {
 		dataType: 'json',
 		replacefileinput: true,
 		add: function (e, data) {
-			$('#cancelUpload').click(
-				function(){
+			$('#cancelUpload').off("click").on('click', function(){
 					data.abort();
-					$("#cancelUpload").off("click");
+					if(!alert("File upload cancelled!")){window.location.reload();}
 				}
 			);
-			data.context = $('#uploadBtn').click(
-				function(){
+			$('#uploadBtn').off('click').on('click', function(){
 					if(!$('#projectName').val()){
-						alert("Please enter a project name.");
-					}else{
+						alert("Please enter the project name.");
+					}
+					else if(!$('#projectDesc').val()){
+						alert("Please enter the project description.");
+					}
+					else{
 						data.formData = {
 							"fileData": JSON.stringify(getFinalFileData())
 						};
 						console.log(data);
 						data.submit();
 					}
-					$("#uploadBtn").off("click");
 				}
 			);
 		},
@@ -66,6 +67,7 @@ function getFinalFileData(){
 			fileData.fileSize = (($('#fileSize').val()||"").trim()) || "";
 		}
 		fileData.projectName = (($('#projectName').val()||"").trim()) || null;
+		fileData.projectDesc = (($('#projectDesc').val()||"").trim()) || null;
 		fileData.appVersionNumber = (($('#appVersionNumber').val()||"").trim()) || null;
 		fileData.changeLog = (($('#changeLog').val()||"").trim()) || null;
 		if(!!fileData.changeLog){
@@ -144,6 +146,7 @@ $(document).on('click', '#addBtn', function(){
 	if($('#addBtn i').hasClass('fa-plus')){
 		showUploadBox();
 		$('#projectName').prop('disabled', false);
+		$('#projectDesc').prop('disabled', false);
 	}
 	else{
 		hideUploadBox();
@@ -154,11 +157,13 @@ function updateBuild(file){
 	hideUploadBox();
 	showUploadBox();
 	$('#projectName').val(file.projectName);
+	$('#projectDesc').val(file.projectDesc);
 	$('#_id').val(file._id);
 	$('#fileCreatedBy').val(file.fileCreatedBy);
 	$('#fileName').val(file.fileName);
 	$('#fileSize').val(file.fileSize);
 	$('#projectName').prop('disabled', true);
+	$('#projectDesc').prop('disabled', true);
 }
 
 $(document).on('change', '#isProduction', function(){

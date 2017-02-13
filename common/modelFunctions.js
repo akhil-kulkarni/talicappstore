@@ -14,12 +14,20 @@ var modelFunctions = {
 		if(!!fileData){
 			if(!!fileData._id){
 				if(!!isDownload){
-					filesModel.findOne({_id: fileData._id}, 'totalDownloads lastDownloadedOn', function(err, file){
+					filesModel.findOne({_id: fileData._id}, 'fileVersionNumber totalDownloads lastDownloadedOn changeLog', function(err, file){
 						if(err){
 							return callback(err);
 						}
 						fileData.totalDownloads = (file.totalDownloads + 1);
 						fileData.lastDownloadedOn = new Date();
+						fileData.changeLog = file.changeLog;
+						for(var i=0; i<fileData.changeLog.length; i++){
+							if(fileData.changeLog[i].fileVersionNumber == file.fileVersionNumber){
+								fileData.changeLog[i].totalDownloads = fileData.totalDownloads;
+								fileData.changeLog[i].lastDownloadedOn = fileData.lastDownloadedOn;
+								break;
+							}
+						}
 						filesModel.update({_id: fileData._id}, fileData, callback);
 					});
 				}
@@ -40,7 +48,12 @@ var modelFunctions = {
 							fileData.fileUpdatedOn = new Date();
 						console.log("\n\nfile.fileCreatedOn: " + file.fileCreatedOn);
 						console.log("fileData.fileUpdatedOn: " + fileData.fileUpdatedOn);
-						filesModel.update({_id: fileData._id}, fileData, callback);
+						filesModel.update({_id: fileData._id}, fileData, function(err){
+							if(!!err){
+								return callback(err);
+							}
+							return callback(null, fileData._id);
+						});
 					});
 				}
 			}
@@ -49,7 +62,13 @@ var modelFunctions = {
 				fileData.fileVersionNumber = 1;
 				fileData.changeLog = {fileVersionNumber: fileData.fileVersionNumber, changeLog: fileData.changeLog};
 				var newFile = new filesModel(fileData);
-				newFile.save(callback);
+				newFile.save(function(err, fl){
+					if(err){
+						return callback(err);
+					}
+					console.log("returning fl._id: " + fl._id);
+					return callback(null, fl._id);
+				});
 			}
 		}
 		else{
@@ -61,7 +80,7 @@ var modelFunctions = {
 		if(isProduction!==undefined && isProduction!==null){
 			whereObj.isProduction = isProduction;
 		}
-		filesModel.find(whereObj).select('fileName fileType filePath fileSize fileVersionNumber projectName appVersionNumber fileCreatedBy fileUpdatedBy fileCreatedOn fileUpdatedOn changeLog dependencies totalDownloads lastDownloadedOn doNotDelete isProduction').sort('-fileUpdatedOn').exec(function(err, files){
+		filesModel.find(whereObj).select('_id fileName fileType filePath fileSize fileVersionNumber projectName projectDesc appVersionNumber fileCreatedBy fileUpdatedBy fileCreatedOn fileUpdatedOn changeLog dependencies totalDownloads lastDownloadedOn doNotDelete isProduction').sort('-fileUpdatedOn').exec(function(err, files){
 			if(!!err){
 				return callback(err);
 			}
@@ -91,11 +110,11 @@ var modelFunctions = {
 						file.fileSize = __getFileSizeReadable({"size": file.fileSize, "unit": "bytes"});
 						file.fileSize = file.fileSize.size + " " + file.fileSize.unit;
 					}
-					file.filePath += file.fileName;
+					file.filePath += file._id + "/" + file.fileName;
 					file.isapk = true;
 					if(file.fileType=='ipa' && !!file.dependencies){
 						file.isapk = false;
-						file.filePath = "itms-services://?action=download-manifest&amp;url=" + file.dependencies.filePath + file.dependencies.fileName;
+						file.filePath = "itms-services://?action=download-manifest&amp;url=" + file.dependencies.filePath + file._id + "/" + file.dependencies.fileName;
 					}
 				});
 				return callback(err, fileList);
