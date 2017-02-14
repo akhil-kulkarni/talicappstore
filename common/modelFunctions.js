@@ -80,7 +80,7 @@ var modelFunctions = {
 		if(isProduction!==undefined && isProduction!==null){
 			whereObj.isProduction = isProduction;
 		}
-		filesModel.find(whereObj).select('_id fileName fileType filePath fileSize fileVersionNumber projectName projectDesc appVersionNumber fileCreatedBy fileUpdatedBy fileCreatedOn fileUpdatedOn changeLog dependencies totalDownloads lastDownloadedOn doNotDelete isProduction').sort('-fileUpdatedOn').exec(function(err, files){
+		filesModel.find(whereObj).select('_id fileName fileType filePath fileSize fileVersionNumber projectName projectDesc appVersionNumber fileCreatedBy fileUpdatedBy fileCreatedOn fileUpdatedOn changeLog dependencies totalDownloads lastDownloadedOn doNotDelete isProduction isDeleted fileDeletedOn').sort('-fileUpdatedOn').exec(function(err, files){
 			if(!!err){
 				return callback(err);
 			}
@@ -105,6 +105,8 @@ var modelFunctions = {
 						file.fileUpdatedOn = __getDateTimeToSend(file.fileUpdatedOn, true);
 					if(!!file.lastDownloadedOn)
 						file.lastDownloadedOn = __getDateTimeToSend(file.lastDownloadedOn, true);
+					if(!!file.fileDeletedOn)
+						file.lastDownloadedOn = __getDateTimeToSend(file.lastDownloadedOn, true);
 					if(!!file.fileSize){
 						console.log("fileSize: " + file.fileSize);
 						file.fileSize = __getFileSizeReadable({"size": file.fileSize, "unit": "bytes"});
@@ -123,8 +125,36 @@ var modelFunctions = {
 				return callback("no file found", null);
 			}
 		});
-	}
+	},
+	softDelete: function(){
 
+	},
+	purge: function(cutoff){
+		console.log('in purge:' + new Date() + ' --cutoff: ' + cutoff);
+		filesModel.find({fileUpdatedOn: {$lt: cutoff}, doNotDelete: false, isProduction: false},
+			function (err, fileList) {
+				if(err){
+					console.log("error cronjob -purge -find: " + err);
+				}
+				if(!!fileList && fileList.length>0){
+					fileList.forEach(
+						function(file){
+							file.filePath += file._id + "/" + file.fileName;
+							callback(file.filePath, function(err1){
+								if(!!err1){
+									console.log("error cronjob -purge -deleteFileCallbackRes: " + err1);
+								}
+								else{
+									var _file = {isDeleted: true, fileDeletedOn: new Date()};
+									filesModel.update({_id: file._id}, _file, null);
+								}
+							});
+						}
+					);
+				}
+			}
+		);
+	}
 };
 
 

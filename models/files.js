@@ -14,6 +14,7 @@ var filesSchema = new mongoose.Schema({
 	fileDeletedBy: String, // admin or scheduler
 	fileCreatedOn: {type: Date, default: Date.now},
 	fileUpdatedOn: {type: Date, default: Date.now},
+	isDeleted: {type: Boolean, default: false},
 	fileDeletedOn: Date,
 	changeLog: [{
 		fileVersionNumber: {type: Number, default: 1},

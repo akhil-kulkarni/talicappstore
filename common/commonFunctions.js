@@ -8,6 +8,7 @@ var mime = require('mime');
 var modelFunctions = require('./modelFunctions.js');
 var xoauth2 = require('xoauth2');
 var ipaMetadata = require('ipa-metadata');
+var CronJob = require('cron').CronJob;
 
 var commonFunctions = {
 	getLoginModelCount: function(req, callback){
@@ -295,6 +296,42 @@ var commonFunctions = {
 				}
 			});
 			srcFile.on('error', function(err) { console.log("file upload failed: " + err); callback(true, "file copy failed!"); });
+		}
+	},
+	deleteFile: function(filePath, callback){
+		fs.exists(filePath, function(exists) {
+			if(exists){
+				fs.unlink(filePath,function(err){
+					if(err) return callback(err);
+					else return callback();
+				});
+			}
+			else{
+				callback("file does not exist!");
+			}
+		});
+	},
+	purge: function(){
+		var cutoff = new Date();
+		cutoff.setDate(cutoff.getDate()-10);
+		modelFunctions.purge(cutoff, commonFunctions.deleteFile);
+	},
+	startCronJobs: function(){
+		console.log("starting cron jobs");
+		try{
+			var purge = new CronJob({
+				cronTime: '00 00 00 * * 0-6',
+				onTick:  function() {
+					// every night at 00:00:00
+					console.log("purge job ticked at " + new Date());
+					commonFunctions.purge(new Date());
+				},
+				start: true,
+				timeZone: 'Asia/Kolkata'
+			});
+		}
+		catch(ex){
+			console.log("Invalid cron time!");
 		}
 	}
 };
