@@ -245,7 +245,7 @@ $(document).on('click', '#sendMail', function(){
 				alert(invalidEmailId + " is an invalid email id!");
 			}
 			else{
-				sendMail($('#uploaderName').val(), toList, ccList, $('#projectName').val(), $('#projectDesc').val(), $('#changeLog').val(), $('#isProduction').val());
+				sendMail($('#uploaderName').val(), toList, ccList, $('#projectName').val(), $('#projectDesc').val(), $('#changeLog').val(), $('#isProduction').prop('checked'));
 			}
 		}
 		else if(!projectName){
