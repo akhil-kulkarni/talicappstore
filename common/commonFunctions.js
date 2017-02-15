@@ -333,6 +333,75 @@ var commonFunctions = {
 		catch(ex){
 			console.log("Invalid cron time!");
 		}
+	},
+	isEmailIdInvalid: function(email){
+		return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email);
+	},
+	validateEmailList: function(toList, ccList, callback){
+		console.log("toList: " + toList);
+		var invalidEmailId = null;
+		var i=0;
+		if(!!toList && (toList.length>0)){
+			for(i=0; i<toList.length; i++){
+				toList[i] = (!!toList[i])?(toList[i].trim()):toList[i];
+				if(!commonFunctions.isEmailIdInvalid(toList[i])){
+					invalidEmailId = toList[i];
+					break;
+				}
+			}
+			if(!invalidEmailId && !!ccList && (ccList.length>0)){
+				for(i=0; i<ccList.length; i++){
+					ccList[i] = (!!ccList[i])?(ccList[i].trim()):ccList[i];
+					if(!commonFunctions.isEmailIdInvalid(ccList[i])){
+						invalidEmailId = ccList[i];
+						break;
+					}
+				}
+			}
+			if(!!invalidEmailId){
+				callback(invalidEmailId + " is an invalid email id!");
+			}
+			else{
+				callback();
+			}
+		}
+	},
+	sendUploadMail: function(from, toList, ccList, projectName, projectDesc, changeLog, isProduction, callback){
+		if(!!toList){
+			if(!!projectName && !!projectDesc){
+				commonFunctions.validateEmailList(toList, ccList, function(err){
+					if(!!err){
+						return callback({error: err});
+					}
+
+					if(!!changeLog){
+						changeLog = changeLog.split("\n").join("</li><li>");
+						changeLog = "<div style='margin-left: 10px;'><ol><li>" + changeLog + "</li></ol></div>";
+					}
+					else{
+						changeLog = "Not available.";
+					}
+
+					var uploadMailTemplate = constants.uploadMailTemplate.replace("||projectName||", projectName);
+					uploadMailTemplate = uploadMailTemplate.replace("||projectDesc||", projectDesc);
+					uploadMailTemplate = uploadMailTemplate.replace("||changeLog||", changeLog);
+					uploadMailTemplate = uploadMailTemplate.split("||siteURL||").join( (!!isProduction)?(commonFunctions.config().siteURL+"/prod"):commonFunctions.config().siteURL);
+
+					commonFunctions.sendMail(from || "Anonymous", "New build: " + projectName, toList.join(), ((!!ccList)?ccList.join():null), uploadMailTemplate, function(){
+						return callback("mail sent successfully.");
+					});
+				});
+			}
+			else if(!projectName){
+				return callback({error: "project name cannot be empty"});
+			}
+			else if(!projectDesc){
+				return callback({error: "project description cannot be empty"});
+			}
+		}
+		else{
+			return callback({error: "'to' list cannot be empty"});
+		}
 	}
 };
 

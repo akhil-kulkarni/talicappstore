@@ -45,7 +45,7 @@ app.use(function(req, res, next) {
 
 var userSession;
 
-// commonFunctions.sendMail('John Cena', "Test Mail", "klkrni.akhil@gmail.com", null, "<b>Hello Again! WWE Rocks...</b>", function(){
+// commonFunctions.sendMail('John Cena', "Test Mail", "klkrni.akhil@gmail.com", null, constants.uploadMailTemplate, function(){
 // 	console.log("send mail callback");
 // });
 
@@ -90,7 +90,7 @@ app.get('/devConsole', function(req, res) {
 });
 
 app.post("/login", function(req, res){
-	if(!!res && !!req.body && !!req.body.password && !!req.body.username){
+	if(!!req && !!req.body && !!req.body.password && !!req.body.username){
 		console.log("req.body.username: " + req.body.username);
 		if(req.body.username=="dev" || req.body.username=="admin"){
 			commonFunctions.getLoginModelCount({"username": req.body.username, "password": req.body.password},
@@ -201,6 +201,17 @@ app.get("/download", function(req, res){
 				}
 			}
 		});
+	}
+});
+
+app.post('/sendUploadMail', function(req, res){
+	if(!!res && !!req.body){
+		commonFunctions.sendUploadMail(req.body.from, req.body.toList, req.body.ccList, req.body.projectName, req.body.projectDesc, req.body.changeLog, req.body.isProduction, function(response){
+			res.json(response);
+		});
+	}
+	else{
+		res.json({error: "mail data missing not available"});
 	}
 });
 

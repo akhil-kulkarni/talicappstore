@@ -5,10 +5,11 @@ $(function () {
 		add: function (e, data) {
 			$('#cancelUpload').off("click").on('click', function(){
 					data.abort();
-					if(!alert("File upload cancelled!")){window.location.reload();}
+					alert("File upload cancelled!");
 				}
 			);
-			$('#uploadBtn').off('click').on('click', function(){
+			$('#uploadBtn').off('click').on('click',
+				function(){
 					if(!$('#projectName').val()){
 						alert("Please enter the project name.");
 					}
@@ -37,7 +38,9 @@ $(function () {
 			}
 			else{
 				$('.progress-bar').text("Uploaded Successfully!");
-				if(!alert("File uploaded successfully!")){window.location.reload();}
+				if(!alert("File uploaded successfully!")){
+					$('#sendMail').prop('disabled', false);
+				}
 			}
 		},
 		fail: function (e, data) {
@@ -104,6 +107,7 @@ $(document).on('click', '#cancelUpload', function(){
 });
 
 $(document).on('change', '#selectFile', function(e){
+	$('#sendMail').prop('disabled', true);
 	console.log("e.target.files.length: " + JSON.stringify(e.target.files));
 	var selectedFile = e.target.files[0];
 	$('#fileName').text(selectedFile.name);
@@ -121,6 +125,7 @@ $(document).on('show.bs.collapse', '.collapse', function(event) {
 });
 
 function showUploadBox(){
+	$('#sendMail').prop('disabled', true);
 	$('#addBtn i').removeClass('fa-plus').addClass('fa-close');
 	$('#addBtn').removeClass('btn-success').addClass('btn-danger');
 	$('#_id').val(null);
@@ -132,6 +137,7 @@ function showUploadBox(){
 }
 
 function hideUploadBox(){
+	$('#sendMail').prop('disabled', true);
 	$('#addBtn i').removeClass('fa-close').addClass('fa-plus');
 	$('#addBtn').removeClass('btn-danger').addClass('btn-success');
 	$('#uploadBox').hide();
@@ -173,5 +179,83 @@ $(document).on('change', '#isProduction', function(){
 	}
 	else{
 		$('#doNotDelete').prop('disabled', false);
+	}
+});
+
+function isEmailIdInvalid(email){
+	return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email);
+}
+
+function sendMail(from, toList, ccList, projectName, projectDesc, changeLog, isProduction){
+	if(!!toList && toList.length>0){
+		$.ajax({
+			url: '/sendUploadMail',
+			type: "POST",
+			data: {"from": from || null, "toList": toList, "ccList": ccList, "projectName": projectName, "projectDesc": projectDesc, "changeLog": changeLog, "isProduction": isProduction},
+			success: function(res){
+				if(!!res){
+					if(!!res.error){
+						alert(res.error);
+					}
+					else{
+						if(!alert("mail sent successfully!")){
+							window.location.reload();
+						}
+					}
+				}
+				else{
+					alert("could not send the mail!");
+				}
+			}
+		});
+	}
+	else{
+		alert("'to' list cannot be empty!");
+	}
+}
+
+$(document).on('click', '#sendMail', function(){
+	var toList = null;
+	var ccList = null;
+	if(!!$('#mailTo').val())
+		toList = $('#mailTo').val().split(";");
+	if(!!$('#mailCC').val())
+		ccList = $('#mailCC').val().split(";");
+	var invalidEmailId = null;
+	var i = 0;
+	if(!!toList && (toList.length>0)){
+		if(!!projectName && !!projectDesc){
+			for(i=0; i<toList.length; i++){
+				toList[i] = (!!toList[i])?(toList[i].trim()):toList[i];
+				if(!isEmailIdInvalid(toList[i])){
+					invalidEmailId = toList[i];
+					break;
+				}
+			}
+			if(!invalidEmailId && !!ccList && (ccList.length>0)){
+				for(i=0; i<ccList.length; i++){
+					ccList[i] = (!!ccList[i])?(ccList[i].trim()):ccList[i];
+					if(!isEmailIdInvalid(ccList[i])){
+						invalidEmailId = ccList[i];
+						break;
+					}
+				}
+			}
+			if(!!invalidEmailId){
+				alert(invalidEmailId + " is an invalid email id!");
+			}
+			else{
+				sendMail($('#uploaderName').val(), toList, ccList, $('#projectName').val(), $('#projectDesc').val(), $('#changeLog').val(), $('#isProduction').val());
+			}
+		}
+		else if(!projectName){
+			alert("project name cannot be empty!");
+		}
+		else if(!projectDesc){
+			alert("project description cannot be empty!");
+		}
+	}
+	else{
+		alert("'to' list cannot be empty!");
 	}
 });

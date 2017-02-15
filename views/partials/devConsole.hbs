@@ -125,7 +125,7 @@
 				</table>
 			</div>
 
-			<div id="uploadBox" class="row" style="display: none; background: #dff0d8; border: 1px solid #1a2c44; margin-top: 20px; border-radius: 5px;">
+			<div id="uploadBox" class="row" style="display: none; background: #dff0d8; border: 1px solid #1a2c44; margin-top: 20px; margin-bottom: 20px; border-radius: 5px;">
 				<form id="uploadForm">
 					<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
 						<div class="row" style="padding: 10px;">
@@ -198,6 +198,25 @@
 									<div class="progress-bar progress-bar-success progress-bar-striped active" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:0%;" role="progressbar"></div>
 								</div>
 							</div>
+						</div>
+						<div class="row upload-file" style="padding: 10px;">
+							<div class="col-xl-4 col-lg-5 col-md-4 col-sm-4 col-xs-6">
+								<label style="margin-top: 5px;">to: </label>
+								<input type="text" id="mailTo"/>
+							</div>
+							<div class="col-xl-4 col-lg-5 col-md-4 col-sm-4 col-xs-6">
+								<label style="margin-top: 5px;">cc: </label>
+								<input type="text" id="mailCC"/>
+							</div>
+							<div class="col-xl-4 col-lg-2 col-md-4 col-sm-4 col-xs-6">
+								<button id="sendMail" type="button" class="btn btn-danger cancel">
+									<i class="fa fa-paper-plane-o"></i>
+									<span> send</span>
+								</button>
+							</div>
+						</div>
+						<div class="row upload-file" style="padding: 10px;">
+							<div style="font-size: 8pt; color:red">The mail ids should be separated using semi colon (;).</div>
 						</div>
 						<div class="row upload-file" style="padding: 10px;">
 							<div style="font-size: 8pt; color:red">* if <b> do not delete </b> is unchecked then the file will be automatically deleted after <b>10 days</b>.</div>
