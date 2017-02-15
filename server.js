@@ -206,7 +206,8 @@ app.get("/download", function(req, res){
 
 app.post('/sendUploadMail', function(req, res){
 	if(!!res && !!req.body){
-		commonFunctions.sendUploadMail(req.body.from, req.body.toList, req.body.ccList, req.body.projectName, req.body.projectDesc, req.body.changeLog, req.body.isProduction, function(response){
+		console.log("req.body.isProduction isProduction: " + req.body.isProduction);
+		commonFunctions.sendUploadMail(req.body.from, req.body.toList, req.body.ccList, req.body.projectName, req.body.projectDesc, req.body.changeLog, (req.body.isProduction==="true"), function(response){
 			res.json(response);
 		});
 	}

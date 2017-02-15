@@ -381,7 +381,7 @@ var commonFunctions = {
 					else{
 						changeLog = "Not available.";
 					}
-
+					console.log("sendUploadMail isProduction: " + !!isProduction);
 					var uploadMailTemplate = constants.uploadMailTemplate.replace("||projectName||", projectName);
 					uploadMailTemplate = uploadMailTemplate.replace("||projectDesc||", projectDesc);
 					uploadMailTemplate = uploadMailTemplate.replace("||changeLog||", changeLog);
