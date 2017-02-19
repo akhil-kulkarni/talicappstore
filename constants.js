@@ -2,6 +2,7 @@ var constants = {
 	projectRoot: __dirname,
 	uploadsFolderPath: __dirname + "/public/uploads",
 	allowedFileTypes: "_apk_ipa_",
+	fromEmailId: "talic.mobility@gmail.com",
 	oAuth2Config_old: {
 		//type: 'OAuth2',
 		user: "akhil16.4.93@gmail.com",

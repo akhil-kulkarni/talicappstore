@@ -97,7 +97,7 @@ body{background-color: #f4f4f3;}
 /*------------------Media queries--------------*/
 
 @media only screen and (max-width:980px){
-    .product-wrap a{font-size: 12px;}
+	.product-wrap a{font-size: 12px;}
 }
 
 .progress-bar{
@@ -111,80 +111,10 @@ body{background-color: #f4f4f3;}
 }
 
 #addBtn {
-    position: fixed;
-    width: 50px;
-    height: 50px;
-    bottom: 20px;
-    right: 20px;
-    border-radius: 50%;
-    /*border: 1px solid red;
-    background: red;
-    color: white;*/
-    /*display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 40px;*/
+	position: fixed;
+	width: 50px;
+	height: 50px;
+	bottom: 20px;
+	right: 20px;
+	border-radius: 50%;
 }
-
-
-/*
-
-
-.collapse-custom .navbar-tool {
-  display: none;
-}
-.collapse-custom .navbar {
-  margin-bottom: 0;
-  border-radius: 0;
-  cursor: pointer;
-  border-bottom: none;
-}
-.collapse-custom .navbar .btn-xs {
-  font-size: inherit;
-}
-.collapse-custom .navbar li ul {
-  list-style-type: none;
-  padding-left: 15px;
-}
-.collapse-custom .navbar:last-of-type {
-  border-bottom: 1px solid #e7e7e7;
-}
-.collapse-custom .navbar-heading {
-  background: #3276b1;
-  cursor: default;
-  font-weight: bold;
-  font-size: 16px;
-}
-.collapse-custom .navbar-heading li a {
-  color: #fff;
-}
-.collapse-custom .navbar-heading li a:hover {
-  color: #fff;
-}
-.collapse-custom .navbar-nav .one {
-	min-width: 150px;
-}
-.collapse-custom .navbar-nav .two {
-	min-width: 250px;
-}
-.collapse-custom .navbar-nav .three {
-	min-width: 200px;
-}
-.collapse-custom .navbar-nav .four {
-	min-width: 150px;
-}
-.collapse-custom .navbar-nav .five {
-	width: 200px;
-}
-.collapse-custom .navbar-nav .size {
-	width: 100px;
-}
-.collapse-custom .navbar-nav .six {
-	width: 100px;
-}
-.collapse-custom .collapse {
-	background: #fff;
-}
-.collapse-custom .collapse-open {
-	background: #f5f5f5;
-}*/

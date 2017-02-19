@@ -97,6 +97,9 @@ var commonFunctions = {
 	printAllFileRecords: function(){
 		modelFunctions.printAllFileRecords();
 	},
+	printAllEmailRecords: function(){
+		modelFunctions.printAllEmailRecords();
+	},
 	getFileListWithMetaData: function(isProduction, callback){
 		modelFunctions.getFileListWithMetaData(isProduction, this.getDateTimeToSend, this.getFileSizeReadable, callback);
 	},
@@ -387,8 +390,8 @@ var commonFunctions = {
 					uploadMailTemplate = uploadMailTemplate.replace("||changeLog||", changeLog);
 					uploadMailTemplate = uploadMailTemplate.split("||siteURL||").join( (!!isProduction)?(commonFunctions.config().siteURL+"/prod"):commonFunctions.config().siteURL);
 
-					commonFunctions.sendMail(from || "Anonymous", "New build: " + projectName, toList.join(), ((!!ccList)?ccList.join():null), uploadMailTemplate, function(){
-						return callback("mail sent successfully.");
+					commonFunctions.sendMail(from, "New build: " + projectName, toList.join(), ((!!ccList)?ccList.join():null), uploadMailTemplate, function(){
+						return callback({"mailContent": uploadMailTemplate, "subject": "New build: " + projectName});
 					});
 				});
 			}
@@ -402,6 +405,12 @@ var commonFunctions = {
 		else{
 			return callback({error: "'to' list cannot be empty"});
 		}
+	},
+	updateEmailsModel: function(from, toList, ccList, subject, mailContent, fileId, fileVersionNumber, callback){
+		modelFunctions.updateEmailsModel(from, toList, ccList, subject, mailContent, fileId, fileVersionNumber, function(res){
+			commonFunctions.printAllEmailRecords();
+			return callback(res);
+		});
 	}
 };
 

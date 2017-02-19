@@ -147,7 +147,7 @@ app.post('/upload', function(req, res) {
 								}
 								else{
 									files = [{},{}];
-									files[0]._id = updateRes;
+									files[0]._id = updateRes._id;
 									files[0].fileName = req.body.fileData.fileName;
 									files[0].filePath = req.body.fileData.filePath;
 									if(req.body.fileData.fileType==="ipa"){
@@ -207,8 +207,15 @@ app.get("/download", function(req, res){
 app.post('/sendUploadMail', function(req, res){
 	if(!!res && !!req.body){
 		console.log("req.body.isProduction isProduction: " + req.body.isProduction);
-		commonFunctions.sendUploadMail(req.body.from, req.body.toList, req.body.ccList, req.body.projectName, req.body.projectDesc, req.body.changeLog, (req.body.isProduction==="true"), function(response){
-			res.json(response);
+		commonFunctions.sendUploadMail(req.body.from || "Anonymous", req.body.toList, req.body.ccList, req.body.projectName, req.body.projectDesc, req.body.changeLog, (req.body.isProduction==="true"), function(response){
+			if(!response.error){
+				commonFunctions.updateEmailsModel(req.body.from || "Anonymous", req.body.toList, req.body.ccList, response.subject, response.mailContent, req.body._id, req.body.fileVersionNumber, function(resp){
+					return res.json(resp);
+				});
+			}
+			else{
+				return res.json(response);
+			}
 		});
 	}
 	else{

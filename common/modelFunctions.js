@@ -1,6 +1,8 @@
 var mongoose = require('mongoose');
 var loginModel = require('../models/login.js');
 var filesModel = require('../models/files.js');
+var emailsModel = require('../models/emails.js');
+var constants = require('../constants.js');
 
 var modelFunctions = {
 	getLoginModelCount: function(whereClause, callback){
@@ -9,6 +11,9 @@ var modelFunctions = {
 	},
 	printAllFileRecords: function(){
 		filesModel.find().exec(function (err, docs) {console.log(JSON.stringify(docs));});
+	},
+	printAllEmailRecords: function(){
+		emailsModel.find().exec(function (err, docs) {console.log(JSON.stringify(docs));});
 	},
 	updateFilesModel: function(fileData, isDownload, callback){
 		if(!!fileData){
@@ -52,7 +57,7 @@ var modelFunctions = {
 							if(!!err){
 								return callback(err);
 							}
-							return callback(null, fileData._id);
+							return callback(null, {_id: fileData._id, fileVersionNumber: fileData.fileVersionNumber});
 						});
 					});
 				}
@@ -67,7 +72,7 @@ var modelFunctions = {
 						return callback(err);
 					}
 					console.log("returning fl._id: " + fl._id);
-					return callback(null, fl._id);
+					return callback(null, {_id: fl._id, fileVersionNumber: fileData.fileVersionNumber});
 				});
 			}
 		}
@@ -154,6 +159,16 @@ var modelFunctions = {
 				}
 			}
 		);
+	},
+	updateEmailsModel: function(from, toList, ccList, subject, mailContent, fileId, fileVersionNumber, callback){
+		var newEmail = new emailsModel({"fromEmailId": constants.fromEmailId, "from": from, "to": toList, "cc": ccList, "subject": subject, "mailContent": mailContent, "fileId": fileId, "fileVersionNumber": fileVersionNumber});
+		newEmail.save(function(err, email){
+			if(err){
+				return callback({"error": err});
+			}
+			console.log("returning email._id: " + email._id);
+			return callback("success");
+		});
 	}
 };
 

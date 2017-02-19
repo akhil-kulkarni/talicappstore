@@ -39,6 +39,8 @@ $(function () {
 			else{
 				$('.progress-bar').text("Uploaded Successfully!");
 				if(!alert("File uploaded successfully!")){
+					$('#_retFileId').val(data.result._id);
+					$('#retFileVersionNo').val(data.result.retFileVersionNo);
 					$('#sendMail').prop('disabled', false);
 				}
 			}
@@ -107,6 +109,8 @@ $(document).on('click', '#cancelUpload', function(){
 });
 
 $(document).on('change', '#selectFile', function(e){
+	$('#_retFileId').val(null);
+	$('#retFileVersionNo').val(null);
 	$('#sendMail').prop('disabled', true);
 	console.log("e.target.files.length: " + JSON.stringify(e.target.files));
 	var selectedFile = e.target.files[0];
@@ -125,6 +129,8 @@ $(document).on('show.bs.collapse', '.collapse', function(event) {
 });
 
 function showUploadBox(){
+	$('#_retFileId').val(null);
+	$('#retFileVersionNo').val(null);
 	$('#sendMail').prop('disabled', true);
 	$('#addBtn i').removeClass('fa-plus').addClass('fa-close');
 	$('#addBtn').removeClass('btn-success').addClass('btn-danger');
@@ -137,6 +143,8 @@ function showUploadBox(){
 }
 
 function hideUploadBox(){
+	$('#_retFileId').val(null);
+	$('#retFileVersionNo').val(null);
 	$('#sendMail').prop('disabled', true);
 	$('#addBtn i').removeClass('fa-close').addClass('fa-plus');
 	$('#addBtn').removeClass('btn-danger').addClass('btn-success');
@@ -215,6 +223,8 @@ function sendMail(from, toList, ccList, projectName, projectDesc, changeLog, isP
 }
 
 $(document).on('click', '#sendMail', function(){
+	$('#sendMail').prop("disabled", true);
+	$('#sendMail').text("sending");
 	var toList = null;
 	var ccList = null;
 	if(!!$('#mailTo').val())
@@ -245,7 +255,7 @@ $(document).on('click', '#sendMail', function(){
 				alert(invalidEmailId + " is an invalid email id!");
 			}
 			else{
-				sendMail($('#uploaderName').val(), toList, ccList, $('#projectName').val(), $('#projectDesc').val(), $('#changeLog').val(), $('#isProduction').prop('checked'));
+				sendMail($('#uploaderName').val(), toList, ccList, $('#projectName').val(), $('#projectDesc').val(), $('#changeLog').val(), $('#isProduction').prop('checked'), $('#_retFileId').val(), $('#retFileVersionNo').val());
 			}
 		}
 		else if(!projectName){
