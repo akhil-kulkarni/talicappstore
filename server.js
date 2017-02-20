@@ -19,6 +19,8 @@ app.use(express.static(__dirname + '/public'));
 
 commonFunctions.startCronJobs();
 
+commonFunctions.emptyDir("public/uploads", function(){console.log("folder deleted...");});
+
 var hbs = exphbs.create({
 	helpers: {
 		json: function(val){ return JSON.stringify(val);},

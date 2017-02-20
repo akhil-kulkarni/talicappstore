@@ -411,6 +411,19 @@ var commonFunctions = {
 			commonFunctions.printAllEmailRecords();
 			return callback(res);
 		});
+	},
+	emptyDir: function(filePath, callback){
+		fs.exists(filePath, function(exists) {
+			if(exists){
+				fs.emptyDir(filePath,function(err){
+					if(err) return callback(err);
+					else return callback();
+				});
+			}
+			else{
+				callback("file does not exist!");
+			}
+		});
 	}
 };
 
