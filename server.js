@@ -19,8 +19,6 @@ app.use(express.static(__dirname + '/public'));
 
 commonFunctions.startCronJobs();
 
-commonFunctions.emptyDir("public/uploads", function(){console.log("folder deleted...");});
-
 var hbs = exphbs.create({
 	helpers: {
 		json: function(val){ return JSON.stringify(val);},
@@ -46,10 +44,6 @@ app.use(function(req, res, next) {
 });
 
 var userSession;
-
-// commonFunctions.sendMail('John Cena', "Test Mail", "klkrni.akhil@gmail.com", null, constants.uploadMailTemplate, function(){
-// 	console.log("send mail callback");
-// });
 
 app.get('/', function(req, res) {
 	userSession = req.session;
