@@ -154,15 +154,16 @@ var commonFunctions = {
 		var finalString = isoDateArr[2] + "-" + isoDateArr[1] + "-" + isoDateArr[0] + " " + (isoArr[1].split("."))[0];
 		return finalString;
 	},
-	downloadFile: function(file, res){
+	downloadFile: function(file, id, res){
 		console.log("file: " + file);
 		var filename = path.basename(file);
 		var mimetype = mime.lookup(file);
-		console.log("mimetype: " + mimetype);
 		res.setHeader('Content-disposition', 'attachment; filename=' + filename);
 		res.setHeader('Content-type', mimetype);
-		fs.stat(file, function(stat){
-			res.setHeader('Content-Length', stat.size);
+		modelFunctions.getFileSize(id, function(size){
+			console.log("download file size: " + size);
+			if(!!size)
+				res.setHeader('Content-Length', size);
 			var filestream = fs.createReadStream(file);
 			filestream.pipe(res);
 		});

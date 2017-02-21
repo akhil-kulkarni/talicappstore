@@ -190,7 +190,7 @@ app.get("/download", function(req, res){
 			}
 			else{
 				if(!req.query.isipa){
-					commonFunctions.downloadFile(req.query.filePath, res);
+					commonFunctions.downloadFile(req.query.filePath, req.query._id, res);
 				}
 				else{
 					res.json({"success": true});

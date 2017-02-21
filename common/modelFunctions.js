@@ -131,8 +131,13 @@ var modelFunctions = {
 			}
 		});
 	},
-	softDelete: function(){
-
+	getFileSize: function(id, callback){
+		filesModel.findOne({_id: id}, 'fileSize', function(err, file){
+			if(err){
+				return callback(null);
+			}
+			return callback(file.fileSize);
+		});
 	},
 	purge: function(cutoff){
 		console.log('in purge:' + new Date() + ' --cutoff: ' + cutoff);
