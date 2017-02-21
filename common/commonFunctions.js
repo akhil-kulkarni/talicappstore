@@ -161,8 +161,11 @@ var commonFunctions = {
 		console.log("mimetype: " + mimetype);
 		res.setHeader('Content-disposition', 'attachment; filename=' + filename);
 		res.setHeader('Content-type', mimetype);
-		var filestream = fs.createReadStream(file);
-		filestream.pipe(res);
+		fs.stat(file, function(stat){
+			res.setHeader('Content-Length', stat.size);
+			var filestream = fs.createReadStream(file);
+			filestream.pipe(res);
+		});
 	},
 	getFileSizeReadable: function(file){
 		if(file.size<1024)
@@ -223,7 +226,7 @@ var commonFunctions = {
 			ipaMetadata((fileData.filePath + fileData.fileName), function(error, data){
 				data = data.metadata;
 				var plist = constants.plistTemplate;
-				plist = plist.replace("||URL||", (commonFunctions.config().siteURL + "/uploads/ipa/" + fileData.fileName));
+				plist = plist.replace("||URL||", (commonFunctions.config().siteURL + "/uploads/ipa/" + fileData._id + "/" + fileData.fileName));
 				plist = plist.replace("||BUNDLE_IDENTIFIER||", data.CFBundleIdentifier);
 				plist = plist.replace("||TITLE||", data.CFBundleName);
 				plist = plist.replace("||VERSION_NO||", data.CFBundleVersion);
