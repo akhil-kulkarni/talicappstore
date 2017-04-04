@@ -1,16 +1,20 @@
-<link href="css/jquery.fileupload.css" rel="stylesheet">
-<link href="css/jquery.fileupload-ui.css" rel="stylesheet">
+<link href="/css/jquery.fileupload.css" rel="stylesheet">
+<link href="/css/jquery.fileupload-ui.css" rel="stylesheet">
 <div class="top-head">
 	<div style="float: left">
 		<h4 class="text-left">developer console</h4>
 	</div>
 	<div style="float: right">
-		<a style="text-decoration: none; color: white;" href="/"><div style="padding-left: 10px; display: inline-block;">
-			uat app store
-		</div></a>
-		<a style="text-decoration: none; color: white;" href="/prod"><div style="padding-left: 10px; display: inline-block;">
-			prod app store
-		</div></a>
+		<a style="text-decoration: none; color: white;" href="/">
+			<div style="padding-left: 10px; display: inline-block;">
+				uat app store
+			</div>
+		</a>
+		<a style="text-decoration: none; color: white;" href="/prod">
+			<div style="padding-left: 10px; display: inline-block;">
+				prod app store
+			</div>
+		</a>
 		<div style="padding-left: 10px; display: inline-block;">
 			<button type="button" class="btn btn-danger btn-sm" onclick="logout()">
 				<span>Logout</span>
@@ -38,7 +42,7 @@
 					</thead>
 					<tbody>
 						{{#if file}}
-							{{#each file}}
+						{{#each file}}
 						<tr class="accordion-toggle {{trclr @index}}">
 							<td data-toggle="collapse" data-target="#file{{paddedInc @index}}" style="text-align: center;">{{paddedInc @index}}</td>
 							<td data-toggle="collapse" data-target="#file{{paddedInc @index}}" >{{fileName}}</td>
@@ -49,10 +53,16 @@
 							<td data-toggle="collapse" data-target="#file{{paddedInc @index}}" >{{#if isProduction}} Yes {{else}} No {{/if}}</td>
 							<td data-toggle="collapse" data-target="#file{{paddedInc @index}}" >{{fileSize}}</td>
 							<td>
-								<button type="button" class="btn btn-danger btn-sm" onclick="updateBuild({{json this}})">
-									<i class="fa fa-repeat"></i>
-									<span> update build</span>
-								</button>
+								<div style="display: inline-block;">
+									<button type="button" class="btn btn-success btn-sm" onclick="updateBuild({{json this}})" title="update build">
+										<i class="fa fa-repeat"></i>
+									</button>
+								</div>
+								<div style="display: inline-block;">
+									<button type="button" class="btn btn-danger btn-sm" onclick="deleteBuild({{json this}})" title="delete build">
+										<i class="fa fa-remove"></i>
+									</button>
+								</div>
 							</td>
 						</tr>
 						<tr>
@@ -103,9 +113,9 @@
 										{{#if changeLog}}
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
 											<ol>
-											{{#each changeLog}}
+												{{#each changeLog}}
 												<li>{{this}}</li>
-											{{/each}}
+												{{/each}}
 											</ol>
 										</div>
 										{{/if}}
@@ -115,11 +125,11 @@
 						</tr>
 						{{/each}}
 						{{else}}
-							<tr>
-								<td colspan="12" class="danger">
-									No files have been uploaded.
-								</td>
-							</tr>
+						<tr>
+							<td colspan="12" class="danger">
+								No files have been uploaded.
+							</td>
+						</tr>
 						{{/if}}
 					</tbody>
 				</table>
@@ -200,7 +210,7 @@
 							</div>
 						</div>
 						<div class="row upload-file" style="padding: 10px;">
-							<input type="hidden" id="_retFileid"/>
+							<input type="hidden" id="_retFileId"/>
 							<input type="hidden" id="retFileVersionNo"/>
 							<div class="col-xl-4 col-lg-5 col-md-4 col-sm-4 col-xs-6">
 								<label style="margin-top: 5px;">to: </label>
@@ -232,6 +242,6 @@
 		</div>
 	</div>
 </div>
-<script src="js/jquery.ui.widget.js"></script>
-<script src="js/jquery.fileupload.js"></script>
-<script type="text/javascript" src="js/devConsole.js"></script>
+<script src="/js/jquery.ui.widget.js"></script>
+<script src="/js/jquery.fileupload.js"></script>
+<script type="text/javascript" src="/js/devConsole.js"></script>

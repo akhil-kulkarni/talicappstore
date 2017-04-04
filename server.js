@@ -52,6 +52,7 @@ app.get('/', function(req, res) {
 		console.log("fileRes: " + JSON.stringify(filesArr));
 		fileRes.loggedInAs = userSession.username || null;
 		fileRes.files = filesArr || null;
+		fileRes.isNotDownloadLink = true;
 		res.render('TalicAppStore', {"file": fileRes});
 	});
 });
@@ -63,7 +64,18 @@ app.get('/prod', function(req, res) {
 		console.log("fileRes: " + JSON.stringify(filesArr));
 		fileRes.loggedInAs = userSession.username || null;
 		fileRes.files = filesArr || null;
+		fileRes.isNotDownloadLink = true;
 		res.render('TalicAppStore', {"file": fileRes});
+	});
+});
+
+app.get('/downloads/:id', function(req, res) {
+	commonFunctions.getFileDataBasedOnShortUrl(req.params.id, function(post, err){
+		if (err) { throw(err); }
+		//post.loggedInAs = userSession.username || null;
+		post.files = ((!!post)?[post]:null);
+		post.isNotDownloadLink = false;
+		res.render('TalicAppStore', {"file": post});
 	});
 });
 
@@ -156,7 +168,7 @@ app.post('/upload', function(req, res) {
 											res.json({success: false, msg: err});
 										}
 										else{
-											res.json({success: true, msg: "upload success"});
+											res.json({success: true, msg: updateRes});
 										}
 									});
 								}
@@ -201,17 +213,20 @@ app.get("/download", function(req, res){
 });
 
 app.post('/sendUploadMail', function(req, res){
-	if(!!res && !!req.body){
-		console.log("req.body.isProduction isProduction: " + req.body.isProduction);
-		commonFunctions.sendUploadMail(req.body.from || "Anonymous", req.body.toList, req.body.ccList, req.body.projectName, req.body.projectDesc, req.body.changeLog, (req.body.isProduction==="true"), function(response){
-			if(!response.error){
-				commonFunctions.updateEmailsModel(req.body.from || "Anonymous", req.body.toList, req.body.ccList, response.subject, response.mailContent, req.body._id, req.body.fileVersionNumber, function(resp){
-					return res.json(resp);
-				});
-			}
-			else{
-				return res.json(response);
-			}
+	if(!!req && !!req.body){
+		console.log("req.body.isProduction isProduction: " + req.body._id);
+		commonFunctions.getShortId(req.body._id, function(shortId, err){
+			if(!!err){console.log("err sendUploadMail: " + err); res.json(null);}
+			commonFunctions.sendUploadMail(req.body.from || "Anonymous", req.body.toList, req.body.ccList, req.body.projectName, req.body.projectDesc, shortId, req.body.changeLog, (req.body.isProduction==="true"), function(response){
+				if(!response.error){
+					commonFunctions.updateEmailsModel(req.body.from || "Anonymous", req.body.toList, req.body.ccList, response.subject, response.mailContent, req.body._id, req.body.fileVersionNumber, function(resp){
+						return res.json(resp);
+					});
+				}
+				else{
+					return res.json(response);
+				}
+			});
 		});
 	}
 	else{
@@ -226,6 +241,18 @@ app.get('/logout',function(req,res){
 		}
 		else {
 			res.redirect('/');
+		}
+	});
+});
+
+app.post('/deleteBuild', function(req, res){
+	userSession = req.session;
+	commonFunctions.softDelete(req.body.file,userSession.username,function(err){
+		if(!!err){
+			res.send(err);
+		}
+		else{
+			res.send("success");
 		}
 	});
 });

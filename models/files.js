@@ -33,7 +33,8 @@ var filesSchema = new mongoose.Schema({
 		filePath: String,
 		fileType: String,
 		filePurpose: String
-	}
+	},
+	shortId: String // for short url
 }, {collection: "filesCollection", timestamps: true});
 
 module.exports = mongoose.model('files', filesSchema);

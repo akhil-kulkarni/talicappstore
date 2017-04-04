@@ -3,6 +3,7 @@ var loginModel = require('../models/login.js');
 var filesModel = require('../models/files.js');
 var emailsModel = require('../models/emails.js');
 var constants = require('../constants.js');
+var burstShortId = require('burst-short-id');
 
 var modelFunctions = {
 	getLoginModelCount: function(whereClause, callback){
@@ -33,7 +34,12 @@ var modelFunctions = {
 								break;
 							}
 						}
-						filesModel.update({_id: fileData._id}, fileData, callback);
+						filesModel.update({_id: fileData._id}, fileData, function(err){
+							if(!!err){
+								return callback(err);
+							}
+							return callback(null, {_id: fileData._id, fileVersionNumber: fileData.fileVersionNumber});
+						});
 					});
 				}
 				else {
@@ -80,6 +86,41 @@ var modelFunctions = {
 			callback("file related data cannot be blank!");
 		}
 	},
+	prepareFileData: function(file, __getDateTimeToSend, __getFileSizeReadable){
+		file = JSON.parse(JSON.stringify(file));
+		if(!!file.changeLog && file.changeLog.length>0){
+			file.changeLog = (file.changeLog).filter(function(fl){
+				return (fl.fileVersionNumber==file.fileVersionNumber);
+			});
+			if(!!file.changeLog[0].changeLog && file.changeLog[0].changeLog!={}){
+				file.changeLog = (file.changeLog[0].changeLog).split("|");
+			}
+			else {
+				file.changeLog = null;
+			}
+		}
+		if(!!file.fileCreatedOn)
+			file.fileCreatedOn = __getDateTimeToSend(file.fileCreatedOn, true);
+		if(!!file.fileUpdatedOn)
+			file.fileUpdatedOn = __getDateTimeToSend(file.fileUpdatedOn, true);
+		if(!!file.lastDownloadedOn)
+			file.lastDownloadedOn = __getDateTimeToSend(file.lastDownloadedOn, true);
+		if(!!file.fileDeletedOn)
+			file.lastDownloadedOn = __getDateTimeToSend(file.lastDownloadedOn, true);
+		if(!!file.fileSize){
+			console.log("fileSize: " + file.fileSize);
+			file.fileSize = __getFileSizeReadable({"size": file.fileSize, "unit": "bytes"});
+			file.fileSize = file.fileSize.size + " " + file.fileSize.unit;
+		}
+		file.filePath += file._id + "/" + file.fileName;
+		file.isapk = true;
+		if(file.fileType=='ipa' && !!file.dependencies){
+			file.isapk = false;
+			file.filePath = "itms-services://?action=download-manifest&amp;url=" + file.dependencies.filePath + file._id + "/" + file.dependencies.fileName;
+		}
+		console.log("file: " + JSON.stringify(file));
+		return file;
+	},
 	getFileListWithMetaData: function(isProduction, __getDateTimeToSend, __getFileSizeReadable, callback){
 		var whereObj = {fileDeletedOn: null};
 		if(isProduction!==undefined && isProduction!==null){
@@ -91,39 +132,12 @@ var modelFunctions = {
 			}
 			var fileList = JSON.parse(JSON.stringify(files));
 			if(!!fileList && fileList.length>0){
-				fileList.forEach(function(file){
-					console.log("file: " + JSON.stringify(file));
-					if(!!file.changeLog && file.changeLog.length>0){
-						file.changeLog = (file.changeLog).filter(function(fl){
-							return (fl.fileVersionNumber==file.fileVersionNumber);
-						});
-						if(!!file.changeLog[0].changeLog && file.changeLog[0].changeLog!={}){
-							file.changeLog = (file.changeLog[0].changeLog).split("|");
-						}
-						else {
-							file.changeLog = null;
-						}
+				for(var i=0; i<fileList.length; i++){
+					console.log("file: " + JSON.stringify(fileList[i]));
+					if(!!fileList[i]){
+						fileList[i] = modelFunctions.prepareFileData(fileList[i], __getDateTimeToSend, __getFileSizeReadable);
 					}
-					if(!!file.fileCreatedOn)
-						file.fileCreatedOn = __getDateTimeToSend(file.fileCreatedOn, true);
-					if(!!file.fileUpdatedOn)
-						file.fileUpdatedOn = __getDateTimeToSend(file.fileUpdatedOn, true);
-					if(!!file.lastDownloadedOn)
-						file.lastDownloadedOn = __getDateTimeToSend(file.lastDownloadedOn, true);
-					if(!!file.fileDeletedOn)
-						file.lastDownloadedOn = __getDateTimeToSend(file.lastDownloadedOn, true);
-					if(!!file.fileSize){
-						console.log("fileSize: " + file.fileSize);
-						file.fileSize = __getFileSizeReadable({"size": file.fileSize, "unit": "bytes"});
-						file.fileSize = file.fileSize.size + " " + file.fileSize.unit;
-					}
-					file.filePath += file._id + "/" + file.fileName;
-					file.isapk = true;
-					if(file.fileType=='ipa' && !!file.dependencies){
-						file.isapk = false;
-						file.filePath = "itms-services://?action=download-manifest&amp;url=" + file.dependencies.filePath + file._id + "/" + file.dependencies.fileName;
-					}
-				});
+				}
 				return callback(err, fileList);
 			}
 			else{
@@ -139,7 +153,7 @@ var modelFunctions = {
 			return callback(file.fileSize);
 		});
 	},
-	purge: function(cutoff){
+	purge: function(cutoff, deleteFile){
 		console.log('in purge:' + new Date() + ' --cutoff: ' + cutoff);
 		filesModel.find({fileUpdatedOn: {$lt: cutoff}, doNotDelete: false, isProduction: false},
 			function (err, fileList) {
@@ -150,7 +164,7 @@ var modelFunctions = {
 					fileList.forEach(
 						function(file){
 							file.filePath += file._id + "/" + file.fileName;
-							callback(file.filePath, function(err1){
+							deleteFile(file.filePath, function(err1){
 								if(!!err1){
 									console.log("error cronjob -purge -deleteFileCallbackRes: " + err1);
 								}
@@ -174,6 +188,32 @@ var modelFunctions = {
 			console.log("returning email._id: " + email._id);
 			return callback("success");
 		});
+	},
+	softDelete: function(fileData, userId){
+		filesModel.update({_id: fileData._id}, {isDeleted: true, fileDeletedBy: userId, fileDeletedOn: new Date()}, function(err){return err;});
+	},
+	getFileDataBasedOnShortUrl: function(shortId, __getDateTimeToSend, __getFileSizeReadable, callback){
+		filesModel.findOne({"shortId": shortId}, '_id fileName fileType filePath fileSize fileVersionNumber projectName projectDesc appVersionNumber fileCreatedBy fileUpdatedBy fileCreatedOn fileUpdatedOn changeLog dependencies totalDownloads lastDownloadedOn doNotDelete isProduction isDeleted fileDeletedOn', function(err, file){
+			if(err){
+				return callback(null, err);
+			}
+			if(!!file){
+				file = modelFunctions.prepareFileData(file, __getDateTimeToSend, __getFileSizeReadable);
+			}
+			return callback(file);
+		});
+	},
+	getShortId: function(_id, callback){
+		console.log("_id: " + _id);
+		var shortId = burstShortId(_id);
+		filesModel.update({"_id": _id}, {"shortId": shortId},
+			function(err){
+				if(!!err){
+					callback(null, err);
+				}
+				callback(shortId);
+			}
+		);
 	}
 };
 

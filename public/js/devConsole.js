@@ -39,8 +39,8 @@ $(function () {
 			else{
 				$('.progress-bar').text("Uploaded Successfully!");
 				if(!alert("File uploaded successfully!")){
-					$('#_retFileId').val(data.result._id);
-					$('#retFileVersionNo').val(data.result.retFileVersionNo);
+					$('#_retFileId').val(data.result.msg._id);
+					$('#retFileVersionNo').val(data.result.msg.fileVersionNumber);
 					$('#sendMail').prop('disabled', false);
 				}
 			}
@@ -194,12 +194,12 @@ function isEmailIdInvalid(email){
 	return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email);
 }
 
-function sendMail(from, toList, ccList, projectName, projectDesc, changeLog, isProduction){
+function sendMail(from, toList, ccList, projectName, projectDesc, changeLog, isProduction, _id, fileVersionNumber){
 	if(!!toList && toList.length>0){
 		$.ajax({
 			url: '/sendUploadMail',
 			type: "POST",
-			data: {"from": from || null, "toList": toList, "ccList": ccList, "projectName": projectName, "projectDesc": projectDesc, "changeLog": changeLog, "isProduction": isProduction},
+			data: {"from": from || null, "toList": toList, "ccList": ccList, "projectName": projectName, "projectDesc": projectDesc, "changeLog": changeLog, "isProduction": isProduction, "_id": _id},
 			success: function(res){
 				if(!!res){
 					if(!!res.error){
@@ -269,3 +269,26 @@ $(document).on('click', '#sendMail', function(){
 		alert("'to' list cannot be empty!");
 	}
 });
+
+function deleteBuild(file){
+	$.ajax({
+		url: '/deleteBuild',
+		type: "POST",
+		data: {"file": file},
+		success: function(res){
+			if(!!res){
+				if(!!res.error){
+					alert(res.error);
+				}
+				else{
+					if(!alert("build deleted successfully!")){
+						window.location.reload();
+					}
+				}
+			}
+			else{
+				alert("could not delete the build!");
+			}
+		}
+	});
+}

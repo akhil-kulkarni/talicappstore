@@ -9,6 +9,7 @@ var modelFunctions = require('./modelFunctions.js');
 var xoauth2 = require('xoauth2');
 var ipaMetadata = require('ipa-metadata');
 var CronJob = require('cron').CronJob;
+var qr = require('qr-image');
 
 var commonFunctions = {
 	getLoginModelCount: function(req, callback){
@@ -373,7 +374,7 @@ var commonFunctions = {
 			}
 		}
 	},
-	sendUploadMail: function(from, toList, ccList, projectName, projectDesc, changeLog, isProduction, callback){
+	sendUploadMail: function(from, toList, ccList, projectName, projectDesc, shortId, changeLog, isProduction, callback){
 		if(!!toList){
 			if(!!projectName && !!projectDesc){
 				commonFunctions.validateEmailList(toList, ccList, function(err){
@@ -392,11 +393,33 @@ var commonFunctions = {
 					var uploadMailTemplate = constants.uploadMailTemplate.replace("||projectName||", projectName);
 					uploadMailTemplate = uploadMailTemplate.replace("||projectDesc||", projectDesc);
 					uploadMailTemplate = uploadMailTemplate.replace("||changeLog||", changeLog);
-					uploadMailTemplate = uploadMailTemplate.split("||siteURL||").join( (!!isProduction)?(commonFunctions.config().siteURL+"/prod"):commonFunctions.config().siteURL);
+					uploadMailTemplate = uploadMailTemplate.split("||fileLink||").join( commonFunctions.config().siteURL + "/downloads/" + shortId);
 
-					commonFunctions.sendMail(from, "New build: " + projectName, toList.join(), ((!!ccList)?ccList.join():null), uploadMailTemplate, function(){
-						return callback({"mailContent": uploadMailTemplate, "subject": "New build: " + projectName});
+					var qrCode = qr.image("http://talicappstore.cloudno.de/downloads/" + shortId, { type: 'png', ec_level: 'H' });
+					console.log("qrCode: " + JSON.stringify(qrCode));
+					var qrC = "";
+					var chunks = [];
+					qrCode.on('data',function(chunk){
+						chunks.push(chunk);
+						console.log('chunk:', chunk.length);
 					});
+
+
+					qrCode.on('end',function(){
+						// console.log('final output ' + qrC);
+						var result = Buffer.concat(chunks);
+						console.log('final result:', result.toString('base64'));
+						qrC = result.toString('base64');
+						uploadMailTemplate = uploadMailTemplate.replace("||qrCode||", "data:image/png;base64," + qrC);
+						uploadMailTemplate = uploadMailTemplate.split("||siteURL||").join( (!!isProduction)?(commonFunctions.config().siteURL+"/prod"):commonFunctions.config().siteURL);
+						//http://localhost:8081/downloads/TvHQRI
+						commonFunctions.sendMail(from, "New build: " + projectName, toList.join(), ((!!ccList)?ccList.join():null), uploadMailTemplate, function(){
+							return callback({"mailContent": uploadMailTemplate, "subject": "New build: " + projectName});
+						});
+					});
+					
+
+					
 				});
 			}
 			else if(!projectName){
@@ -428,6 +451,15 @@ var commonFunctions = {
 				callback("file does not exist!");
 			}
 		});
+	},
+	softDelete: function(file, userId, callback){
+		modelFunctions.softDelete(file, userId, callback);
+	},
+	getFileDataBasedOnShortUrl: function(shortUrl, callback){
+		modelFunctions.getFileDataBasedOnShortUrl(shortUrl, this.getDateTimeToSend, this.getFileSizeReadable, callback);
+	},
+	getShortId: function(_id, callback){
+		modelFunctions.getShortId(_id, callback);
 	}
 };
 
