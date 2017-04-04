@@ -395,7 +395,7 @@ var commonFunctions = {
 					uploadMailTemplate = uploadMailTemplate.replace("||changeLog||", changeLog);
 					uploadMailTemplate = uploadMailTemplate.split("||fileLink||").join( commonFunctions.config().siteURL + "/downloads/" + shortId);
 
-					var qrCode = qr.image("http://talicappstore.cloudno.de/downloads/" + shortId, { type: 'png', ec_level: 'H' });
+					var qrCode = qr.image(commonFunctions.config().siteURL + "/downloads/" + shortId, { type: 'png', ec_level: 'H' });
 					console.log("qrCode: " + JSON.stringify(qrCode));
 					var qrC = "";
 					var chunks = [];
