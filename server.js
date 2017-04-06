@@ -140,35 +140,45 @@ app.post('/upload', function(req, res) {
 				if(!!req.body.fileData){
 					req.body.fileData.fileType = req.body.fileData.fileType || commonFunctions.getFileExt(req.body.fileData.fileName);
 					req.body.fileData.filePath = req.body.fileData.filePath || (constants.uploadsFolderPath + "/" + req.body.fileData.fileType + "/");
-					commonFunctions.saveOrUpdatePLISTFile(req.body.fileData, function(error, plistRes){
-						if(error){
-							res.json({success: false, msg: error});
+					commonFunctions.updateFilesModel(req.body.fileData, false, false, function(err, updFileModelRes){
+						if(err){
+							console.log("updateFilesModel updFileModelRes err: " + err);
 						}
 						else{
-							 if(!!plistRes && plistRes!=="success"){
-								 //ipa file
-								req.body.fileData.dependencies = plistRes;
+							if(!!updFileModelRes && !!updFileModelRes._id){
+								req.body.fileData._id = updFileModelRes._id;
 							}
-							commonFunctions.updateFilesModel(req.body.fileData, false, function(err, updateRes){
-								if(err){
-									console.log("updateFilesModel err: " + err);
+							commonFunctions.saveOrUpdatePLISTFile(req.body.fileData, function(error, plistRes){
+								if(error){
+									res.json({success: false, msg: error});
 								}
 								else{
-									files = [{},{}];
-									files[0]._id = updateRes._id;
-									files[0].fileName = req.body.fileData.fileName;
-									files[0].filePath = req.body.fileData.filePath;
-									if(req.body.fileData.fileType==="ipa"){
-										files[1].fileName = req.body.fileData.dependencies.fileName;
-										//using the ipa file path instead of dependencies path as the dependencies path will have the site url in it instead of the actual location of the file.
-										files[1].filePath = req.body.fileData.filePath;
+									 if(!!plistRes && plistRes!=="success"){
+										 //ipa file
+										req.body.fileData.dependencies = plistRes;
 									}
-									commonFunctions.moveFiles(files, function(err, msg){
-										if(!!err){
-											res.json({success: false, msg: err});
+									commonFunctions.updateFilesModel(req.body.fileData, false, true, function(err, updateRes){
+										if(err){
+											console.log("updateFilesModel err: " + err);
 										}
 										else{
-											res.json({success: true, msg: updateRes});
+											files = [{},{}];
+											files[0]._id = updateRes._id;
+											files[0].fileName = req.body.fileData.fileName;
+											files[0].filePath = req.body.fileData.filePath;
+											if(req.body.fileData.fileType==="ipa"){
+												files[1].fileName = req.body.fileData.dependencies.fileName;
+												//using the ipa file path instead of dependencies path as the dependencies path will have the site url in it instead of the actual location of the file.
+												files[1].filePath = req.body.fileData.filePath;
+											}
+											commonFunctions.moveFiles(files, function(err, msg){
+												if(!!err){
+													res.json({success: false, msg: err});
+												}
+												else{
+													res.json({success: true, msg: updateRes});
+												}
+											});
 										}
 									});
 								}
@@ -195,7 +205,7 @@ app.get("/download", function(req, res){
 	var file = req.query;
 	console.log("req.body.filePath: " + JSON.stringify(req.query.filePath));
 	if(!!file){
-		commonFunctions.updateFilesModel(JSON.parse(JSON.stringify(req.query)), true, function(err, msg){
+		commonFunctions.updateFilesModel(JSON.parse(JSON.stringify(req.query)), true, false, function(err, msg){
 			if(!!err){
 				console.log("error updating download file details: " + err);
 				res.json({"success": false, "err": "Unable to download file!"});

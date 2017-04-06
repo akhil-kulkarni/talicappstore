@@ -48,3 +48,15 @@ function downloadFile(type, currEle){
 		});
 	}
 }
+
+$("#username").keyup(function(event){
+	if(event.keyCode == 13){
+		$("#loginFormSubmit").click();
+	}
+});
+
+$("#password").keyup(function(event){
+	if(event.keyCode == 13){
+		$("#loginFormSubmit").click();
+	}
+});

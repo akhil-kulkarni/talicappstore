@@ -83,13 +83,13 @@ var commonFunctions = {
 			return null;
 		}
 	},
-	updateFilesModel: function(fileData, isDownload, callback){
+	updateFilesModel: function(fileData, isDownload, isPlistUpdate, callback){
 		if(!!fileData){
 			if(!!isDownload && ("filePath" in fileData)){
 				// delete fileData.filePath so as to not overwrite path during download
 				delete fileData.filePath;
 			}
-			modelFunctions.updateFilesModel(fileData, isDownload, callback);
+			modelFunctions.updateFilesModel(fileData, isDownload, isPlistUpdate, callback);
 		}
 		else{
 			return callback("file data cannot be blank!");

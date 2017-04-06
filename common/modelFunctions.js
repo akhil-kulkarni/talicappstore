@@ -16,7 +16,7 @@ var modelFunctions = {
 	printAllEmailRecords: function(){
 		emailsModel.find().exec(function (err, docs) {console.log(JSON.stringify(docs));});
 	},
-	updateFilesModel: function(fileData, isDownload, callback){
+	updateFilesModel: function(fileData, isDownload, isPlistUpdate, callback){
 		if(!!fileData){
 			if(!!fileData._id){
 				if(!!isDownload){
@@ -47,18 +47,20 @@ var modelFunctions = {
 						if(err){
 							return callback(err);
 						}
-						console.log("in findOne: " + file.fileVersionNumber);
-						var fileVersionNumber = file.fileVersionNumber;
-						fileData.fileVersionNumber = ++fileVersionNumber;
-						var changeLog = fileData.changeLog;
-						var fileChangeLog = JSON.parse(JSON.stringify(file.changeLog));
-						console.log("final changelog: " + fileChangeLog);
-						fileChangeLog.push({fileVersionNumber: fileData.fileVersionNumber, changeLog: changeLog});
-						fileData.changeLog = fileChangeLog;
-						if(!!file.fileCreatedOn)
-							fileData.fileUpdatedOn = new Date();
-						console.log("\n\nfile.fileCreatedOn: " + file.fileCreatedOn);
-						console.log("fileData.fileUpdatedOn: " + fileData.fileUpdatedOn);
+						if(!isPlistUpdate){
+							console.log("in findOne: " + file.fileVersionNumber);
+							var fileVersionNumber = file.fileVersionNumber;
+							fileData.fileVersionNumber = ++fileVersionNumber;
+							var changeLog = fileData.changeLog;
+							var fileChangeLog = JSON.parse(JSON.stringify(file.changeLog));
+							console.log("final changelog: " + fileChangeLog);
+							fileChangeLog.push({fileVersionNumber: fileData.fileVersionNumber, changeLog: changeLog});
+							fileData.changeLog = fileChangeLog;
+							if(!!file.fileCreatedOn)
+								fileData.fileUpdatedOn = new Date();
+							console.log("\n\nfile.fileCreatedOn: " + file.fileCreatedOn);
+							console.log("fileData.fileUpdatedOn: " + fileData.fileUpdatedOn);
+						}
 						filesModel.update({_id: fileData._id}, fileData, function(err){
 							if(!!err){
 								return callback(err);
@@ -189,11 +191,11 @@ var modelFunctions = {
 			return callback("success");
 		});
 	},
-	softDelete: function(fileData, userId){
-		filesModel.update({_id: fileData._id}, {isDeleted: true, fileDeletedBy: userId, fileDeletedOn: new Date()}, function(err){return err;});
+	softDelete: function(fileData, userId, callback){
+		filesModel.update({_id: fileData._id}, {isDeleted: true, fileDeletedBy: userId, fileDeletedOn: new Date()}, callback);
 	},
 	getFileDataBasedOnShortUrl: function(shortId, __getDateTimeToSend, __getFileSizeReadable, callback){
-		filesModel.findOne({"shortId": shortId}, '_id fileName fileType filePath fileSize fileVersionNumber projectName projectDesc appVersionNumber fileCreatedBy fileUpdatedBy fileCreatedOn fileUpdatedOn changeLog dependencies totalDownloads lastDownloadedOn doNotDelete isProduction isDeleted fileDeletedOn', function(err, file){
+		filesModel.findOne({"shortId": shortId, "isDeleted": false}, '_id fileName fileType filePath fileSize fileVersionNumber projectName projectDesc appVersionNumber fileCreatedBy fileUpdatedBy fileCreatedOn fileUpdatedOn changeLog dependencies totalDownloads lastDownloadedOn doNotDelete isProduction isDeleted fileDeletedOn', function(err, file){
 			if(err){
 				return callback(null, err);
 			}
