@@ -60,3 +60,13 @@ $("#password").keyup(function(event){
 		$("#loginFormSubmit").click();
 	}
 });
+
+function onLoginClick(){
+	$("#loginWrapper").toggle();
+	if($("#loginButton").prop("value")==="Login"){
+		$("#loginButton").prop("value", "Cancel");
+	}
+	else{
+		$("#loginButton").prop("value", "Login");
+	}
+}

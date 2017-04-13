@@ -53,6 +53,8 @@ app.get('/', function(req, res) {
 		fileRes.loggedInAs = userSession.username || null;
 		fileRes.files = filesArr || null;
 		fileRes.isNotDownloadLink = true;
+		fileRes.pageName = "talic app store";
+		fileRes.isTalicAppStore = true;
 		res.render('TalicAppStore', {"file": fileRes});
 	});
 });
@@ -65,29 +67,37 @@ app.get('/prod', function(req, res) {
 		fileRes.loggedInAs = userSession.username || null;
 		fileRes.files = filesArr || null;
 		fileRes.isNotDownloadLink = true;
+		fileRes.pageName = "talic app store";
+		fileRes.isTalicAppStore = true;
 		res.render('TalicAppStore', {"file": fileRes});
 	});
 });
 
 app.get('/downloads/:id', function(req, res) {
-	commonFunctions.getFileDataBasedOnShortUrl(req.params.id, function(post, err){
+	commonFunctions.getFileDataBasedOnShortUrl(req.params.id, function(filesArr, err){
 		if (err) { throw(err); }
-		//post.loggedInAs = userSession.username || null;
-		post.files = ((!!post)?[post]:null);
-		post.isNotDownloadLink = false;
-		res.render('TalicAppStore', {"file": post});
+		filesArr.files = ((!!filesArr)?[filesArr]:null);
+		filesArr.isNotDownloadLink = false;
+		filesArr.pageName = "talic app store";
+		fileRes.isTalicAppStore = true;
+		res.render('TalicAppStore', {"file": filesArr});
 	});
 });
 
 app.get('/devConsole', function(req, res) {
 	userSession = req.session;
 	if(!!userSession.username){
-		commonFunctions.getFileListWithMetaData(null, function(err, fileRes){
+		var fileRes = {};
+		commonFunctions.getFileListWithMetaData(null, function(err, files){
 			if(!!err){
-				res.render('devConsole', {"file": null});
+				res.render('devConsole', {"file": {pageName: "developer console", loggedInAs: userSession.username, isNotDownloadLink: true, isTalicAppStore: false}});
 			}
 			else{
 				fileRes.loggedInAs = userSession.username;
+				fileRes.isNotDownloadLink = true;
+				fileRes.pageName = "developer console";
+				fileRes.isTalicAppStore = false;
+				fileRes.files = files;
 				res.render('devConsole', {"file": fileRes});
 			}
 		});

@@ -20,47 +20,7 @@
 	}
 </style>
 {{#if file}}
-<div class="top-head">
-	<div class="top-head-h4-div">
-		<h4>Talic App Store</h4>
-	</div>
-	{{#if file.isNotDownloadLink}}
-	<div class="top-head-div">
-		{{#if file.loggedInAs}}
-		<a style="text-decoration: none; color: white;" href="/devConsole">
-			<div style="padding-left: 10px; display: inline-block;">
-				dev console
-			</div>
-		</a>
-		<div style="padding-left: 10px; display: inline-block;">
-			<button type="button" class="btn btn-danger btn-sm" onclick="logout()">
-				<span>Logout</span>
-			</button>
-		</div>
-		{{else}}
-		<div class="loginAsDiv">
-			<h4>login as: </h4>
-		</div>
-		<div class="loginFormWrapper">
-			<div>
-				<select id="username" name="username">
-					<option value="dev">developer</option>
-					<option value="admin">admin</option>
-				</select>
-			</div>
-			<div>
-				<input id="password" name="password" type="password" placeholder="Password"/>
-			</div>
-			<div>
-				<button id="loginFormSubmit" type="button" class="btn btn-danger btn-sm" onclick="loginFormSubmit()">
-					<span>Login</span>
-				</button>
-			</div>
-		</div>
-		{{/if}}
-	</div>
-	{{/if}}
-</div>
+{{> header }}
 <div class="container">
 	<div class="products">
 		<div class="row">
@@ -91,7 +51,7 @@
 					</div>
 					{{#if isapk}}
 					<form id={{_id}} name={{_id}} method="GET" enctype="multipart/form-data" action="/download">
-						<input type="hidden" name="_id" value="{{_id}}"/>
+						<input type="hidden" name="{{_id}}" value="{{_id}}"/>
 						<input type="hidden" name="filePath" value="{{filePath}}"/>
 						<div class="text-center">
 							<a class="btn android-icon" onclick="downloadFile('apk', this)"  style="color: white;">
@@ -102,7 +62,7 @@
 					</form>
 					{{else}}
 					<form id={{_id}}>
-						<input type="hidden" name="_id" value="{{_id}}"/>
+						<input type="hidden" name="{{_id}}" value="{{_id}}"/>
 						<div class="text-center">
 							<a class="btn ios-icon" onclick="downloadFile('ipa', this)" href={{filePath}} style="color: white;">
 								<i class="fa fa-apple fa-lg"></i>
