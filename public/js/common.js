@@ -28,3 +28,30 @@ function logout(){
 		}
 	});
 }
+
+$(document).on("click", "#sideMenuWrapper", function(){
+	$("#possibleSideMenu").toggle();
+	if($("#possibleSideMenu").css("display")!=="none"){
+		$(".sideMenuBurger").hide();
+		$(".sideMenuCancel").show();
+	}
+	else{
+		$(".sideMenuBurger").show();
+		$(".sideMenuCancel").hide();
+	}
+});
+
+$(document).mouseup(function (e) {
+    var container = $("#loginWrapper");
+    if ((!container.is(e.target)) && (container.has(e.target).length === 0) && (!$("#loginButton").is(e.target))) {
+        container.hide();
+		$("#loginButton").prop("value", "Login");
+    }
+
+	var possibleSideMenu = $("#possibleSideMenu");
+    if ((!possibleSideMenu.is(e.target)) && (possibleSideMenu.has(e.target).length === 0) && (!$("#sideMenuWrapper").is(e.target)) && ($("#sideMenuWrapper").has(e.target).length === 0) && ($("#sideMenuWrapper").css("display")!=="none")) {
+        possibleSideMenu.hide();
+		$(".sideMenuBurger").show();
+		$(".sideMenuCancel").hide();
+    }
+});

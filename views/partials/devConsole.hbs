@@ -1,10 +1,10 @@
 <link href="/css/jquery.fileupload.css" rel="stylesheet">
 <link href="/css/jquery.fileupload-ui.css" rel="stylesheet">
 {{> header }}
-<div class="container">
-	<div class="products">
-		<div class="container-fluid">
-			<div class="row table-responsive" style="border: 1px solid #1a2c44; border-radius: 5px">
+<div class="container" style="top: 50px; position: absolute; width: 100%;">
+	<div class="products" style="margin: 30px auto; width: 98%;">
+		<div class="container-fluid" style="padding: 0px;">
+			<div class="row table-responsive" style="border: 1px solid #1a2c44; border-radius: 5px; margin: 0px;">
 				<table class="table" style="cursor: default;">
 					<thead style="background: #3276b1; color: #fff; cursor: default; font-weight: bold;">
 						<tr>
@@ -31,7 +31,7 @@
 							<td data-toggle="collapse" data-target="#file{{paddedInc @index}}" >{{#if fileUpdatedOn}} {{fileUpdatedOn}} {{else}} {{fileCreatedOn}}{{/if}}</td>
 							<td data-toggle="collapse" data-target="#file{{paddedInc @index}}" >{{#if isProduction}} Yes {{else}} No {{/if}}</td>
 							<td data-toggle="collapse" data-target="#file{{paddedInc @index}}" >{{fileSize}}</td>
-							<td>
+							<td style="width: 105px;">
 								<div style="display: inline-block;">
 									<button type="button" class="btn btn-success btn-sm" onclick="updateBuild({{json this}})" title="update build">
 										<i class="fa fa-repeat"></i>
@@ -114,7 +114,7 @@
 				</table>
 			</div>
 
-			<div id="uploadBox" class="row" style="display: none; background: #dff0d8; border: 1px solid #1a2c44; margin-top: 20px; margin-bottom: 20px; border-radius: 5px;">
+			<div id="uploadBox" class="row" style="display: none; background: #dff0d8; border: 1px solid #1a2c44; margin: 30px auto; border-radius: 5px;">
 				<form id="uploadForm">
 					<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
 						<div class="row" style="padding: 10px;">

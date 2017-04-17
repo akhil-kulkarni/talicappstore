@@ -16,34 +16,80 @@
 		font-size: 24px;
 		font-weight: 600;
 	}
+	@media only screen and (min-width: 600px) {
+		.sideMenuWrapper{
+			display: none;
+		}
+		.possibleSideMenu{
+			display: block !important;
+		}
+	}
+	.sideMenuWrapper{
+		cursor: pointer;
+	}
+	.sideMenuWrapper i{
+		color: white;
+		font-size: 24px;
+		padding: 13px 15px;
+	}
+	@media only screen and (max-width: 599px) {
+		.possibleSideMenu{
+			display: none;
+			background: #1a2c44;
+			height: 150px;
+			width: 100%;
+			position: fixed;
+			top: 50px;
+			left: 0px;
+			opacity: 0.96;
+		}
+		.possibleSideMenu div{
+			width: 100%;
+		}
+		.menuElement{
+			float: right;
+		}
+	}
 </style>
 <header>
-	<div style="width: 100%; background: #1a2c44; height: 50px; position: fixed;">
+	<div style="width: 100%; background: #1a2c44; height: 50px; position: fixed; z-index: 5;">
 		<h4 style="margin: 0px; padding: 15px; float: left; font-family: sans-serif; color: white;">
 			{{file.pageName}}
 		</h4>
 		{{#if file.isNotDownloadLink}}
 		<div style="float: right;">
 			{{#if file.loggedInAs}}
-			{{#if file.isTalicAppStore}}
-			<div style="float: left; padding: 12px; font-size: 16px;">
-				<a style="text-decoration: none; color: white; padding: 10px auto;" href="/devConsole">dev console</a>
+			<div id="sideMenuWrapper" class="sideMenuWrapper">
+				<i class="fa fa-bars sideMenuBurger" aria-hidden="true"></i>
+				<i class="fa fa-remove sideMenuCancel" aria-hidden="true" style="display: none;"></i>
 			</div>
-			<div style="float: left; padding: 12px; font-size: 16px; display: none;">
-				<a style="text-decoration: none; color: white; padding: 10px auto;" href="/adminConsole">admin console</a>
+			<div id="possibleSideMenu" class="possibleSideMenu">
+				{{#if file.isTalicAppStore}}
+				{{!-- dev console link --}}
+				<div style="float: left; padding: 12px; font-size: 16px;">
+					<a class="menuElement" style="text-decoration: none; color: white; padding: 10px auto;" href="/devConsole">dev console</a>
+				</div>
+				{{!-- admin console link --}}
+				<div style="float: left; padding: 12px; font-size: 16px; display: none;">
+					<a class="menuElement" style="text-decoration: none; color: white; padding: 10px auto;" href="/adminConsole">admin console</a>
+				</div>
+				{{else}}
+				{{!-- uat app store link --}}
+				<div style="float: left; padding: 12px; font-size: 16px;">
+					<a class="menuElement" style="text-decoration: none; color: white; padding: 10px auto;" href="/">uat app store</a>
+				</div>
+				{{!-- prod app store link --}}
+				<div style="float: left; padding: 12px; font-size: 16px;">
+					<a class="menuElement" style="text-decoration: none; color: white; padding: 10px auto;" href="/prod">prod app store</a>
+				</div>
+				{{/if}}
+				{{!-- Logout Button --}}
+				<div style="float: left; padding: 8px;">
+					<input id="logoutButton" class="btn btn-danger menuElement" type="submit" value="Logout" style="width: 100px;" onclick="logout()">
+				</div>
 			</div>
 			{{else}}
-			<div style="float: left; padding: 12px; font-size: 16px;">
-				<a style="text-decoration: none; color: white; padding: 10px auto;" href="/">uat app store</a>
-			</div>
-			<div style="float: left; padding: 12px; font-size: 16px;">
-				<a style="text-decoration: none; color: white; padding: 10px auto;" href="/prod">prod app store</a>
-			</div>
-			{{/if}}
-			<div style="float: left; padding: 8px;">
-				<input id="logoutButton" class="btn btn-danger" type="submit" value="Logout" style="width: 100px;" onclick="logout()">
-			</div>
-			{{else}}
+			{{!-- Login Button --}}
 			<div style="float: left; padding: 8px;">
 				<input id="loginButton" class="btn btn-danger" type="submit" value="Login" style="width: 100px;" onclick="onLoginClick()">
 			</div>
