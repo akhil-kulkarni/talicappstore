@@ -21,11 +21,11 @@ mongoose.connection.on('disconnected', function () {
 	console.log('Mongoose default connection disconnected');
 });
 
-mongoose.connection.once('connected', function(){
-	mongoose.connection.db.dropCollection('loginCollection');
-	mongoose.connection.db.dropCollection('filesCollection');
-	mongoose.connection.db.dropCollection('emailsCollection');
-});
+// mongoose.connection.once('connected', function(){
+// 	mongoose.connection.db.dropCollection('loginCollection');
+// 	mongoose.connection.db.dropCollection('filesCollection');
+// 	mongoose.connection.db.dropCollection('emailsCollection');
+// });
 
 // If the Node process ends, close the Mongoose connection
 process.on('SIGINT', function() {
