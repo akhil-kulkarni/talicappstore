@@ -1,0 +1,113 @@
+.dc-container {
+	top: 50px;
+	position: absolute;
+	width: 100%;
+}
+.dc-page-wrapper {
+	margin: 30px auto;
+	width: 98%;
+}
+
+.dc-page {
+	padding: 0px;
+}
+
+.dc-table-wrapper {
+	border: 1px solid #1a2c44;
+	border-radius: 5px;
+	margin: 0px;
+}
+
+.dc-table {
+	cursor: default;
+}
+
+.dc-table thead{
+	background: #3276b1;
+	color: #fff;
+	cursor: default;
+	font-weight: bold;
+}
+
+.td-index {
+	text-align: center;
+}
+
+.td-action-btns {
+	width: 105px;
+}
+
+.td-action-btns div {
+	display: inline-block;
+}
+
+.hiddenRow {
+	padding: 0px !important;
+	border-top: none !important;
+}
+
+.hiddenRow .accordian-body {
+	border-top: 1px solid #ddd;
+}
+
+.dc-padding-10 {
+	padding:10px;
+}
+
+.dc-padding-top-5 {
+	padding-top: 5px;
+}
+
+.dc-margin-top-5 {
+	margin-top: 5px;
+}
+
+.dc-upload-checkbox {
+	height: 20px;
+	width: 20px;
+	padding: 0;
+	margin: 0;
+	vertical-align: bottom;
+	position: relative;
+	top: -1px;
+}
+
+.dc-upload-box {
+	display: none;
+	background: #dff0d8;
+	border: 1px solid #1a2c44;
+	margin: 30px auto;
+	border-radius: 5px;
+}
+
+.dc-ta-project-desc {
+	width: 100%;
+	height: 50px;
+}
+
+.dc-ta-changelog {
+	width: 100%;
+	height: 75px;
+}
+
+.dc-mail-note {
+	font-size: 8pt;
+	color:red;
+}
+
+.progress-bar {
+	color: #1a2c44;
+	font-weight: bold;
+}
+.upload-file {
+	display: none;
+	color: #1a2c44;
+}
+#addBtn {
+	position: fixed;
+	width: 50px;
+	height: 50px;
+	bottom: 20px;
+	right: 20px;
+	border-radius: 50%;
+}

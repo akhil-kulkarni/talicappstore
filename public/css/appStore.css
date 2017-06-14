@@ -1,0 +1,70 @@
+.no-files-msg {padding: 20px;}
+.as-container {
+	position: relative;
+	top: 80px;
+}
+.app-wrap {
+	box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+	position: relative;
+	display: flex;
+	flex-flow: column wrap;
+	width: 100%;
+}
+.app-row {
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-wrap: wrap;
+	-ms-flex-wrap: wrap;
+	flex-wrap: wrap;
+}
+.app-row .col-lg-6, .app-row .col-md-6, .app-row .col-sm-6 {
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex: 1 auto;
+	-ms-flex: 1 auto;
+	flex: 1 auto;
+	margin-bottom: 20px;
+}
+.app-header {
+	height: 125px;
+	border: 3px solid white;
+	width: 100%;
+	display: table;
+}
+.app-header-1 {background: #2c3c58;}
+.app-header-2 {background: #e69532;}
+.app-header-3 {background: #2f2f2f;}
+.app-header-4 {background: #f3766b;}
+.app-header-5 {background: #4ec3c8;}
+.app-name {
+	color: white;
+	font-size: 22pt;
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+	cursor: default;
+}
+.app-details {
+	padding: 10px;
+	flex-grow: 1;
+}
+.app-form {padding: 20px;}
+.android-icon {
+	background-color: #97C024;
+	border:0;
+	transition: ease-in-out 0.3s;
+}
+.android-icon:hover, .android-icon:focus, .android-icon:active:focus {
+	background-color:#7ea01d;
+	transition: ease-in-out 0.3s;
+}
+.ios-icon {
+	background-color: #213856;
+	border:0;transition: ease-in-out 0.3s;
+}
+.ios-icon:hover,.ios-icon:focus,.ios-icon:active:focus {
+	background-color: #142235;
+	transition: ease-in-out 0.3s;
+}

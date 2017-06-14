@@ -1,4 +1,3 @@
-var crypto = require('crypto');
 var nodemailer = require('nodemailer');
 var constants = require('../constants.js');
 var env = require('../env.json');
@@ -14,17 +13,6 @@ var qr = require('qr-image');
 var commonFunctions = {
 	getLoginModelCount: function(req, callback){
 		modelFunctions.getLoginModelCount(req, callback);
-	},
-	getHashedPassword: function(username){
-		var salt = username + "|talicappstore";
-		var password = "Tata_001";
-		if(username==="admin"){
-			password = "_T@l!cSuck$_";
-		}
-		password = crypto.createHash('sha256').update(password).digest('hex') + '';
-		salt = crypto.createHash('sha256').update(salt).digest('hex') + '';
-		var hash = crypto.pbkdf2Sync(password, salt, 1000, 512/8, "sha256");
-		return (hash.toString("hex") + "");
 	},
 	config: function(){
 		return env[process.env.NODE_ENV || 'development'];
@@ -104,33 +92,6 @@ var commonFunctions = {
 	getFileListWithMetaData: function(isProduction, callback){
 		modelFunctions.getFileListWithMetaData(isProduction, this.getDateTimeToSend, this.getFileSizeReadable, callback);
 	},
-	ifCondHelper: function(v1, operator, v2, itms, options){
-		console.log("itms: " + itms);
-		switch (operator) {
-			case '==':
-				return (v1 == v2) ? options.fn(this) : options.inverse(this);
-			case '===':
-				return (v1 === v2) ? options.fn(this) : options.inverse(this);
-			case '!=':
-				return (v1 != v2) ? options.fn(this) : options.inverse(this);
-			case '!==':
-				return (v1 !== v2) ? options.fn(this) : options.inverse(this);
-			case '<':
-				return (v1 < v2) ? options.fn(this) : options.inverse(this);
-			case '<=':
-				return (v1 <= v2) ? options.fn(this) : options.inverse(this);
-			case '>':
-				return (v1 > v2) ? options.fn(this) : options.inverse(this);
-			case '>=':
-				return (v1 >= v2) ? options.fn(this) : options.inverse(this);
-			case '&&':
-				return (v1 && v2) ? options.fn(this) : options.inverse(this);
-			case '||':
-				return (v1 || v2) ? options.fn(this) : options.inverse(this);
-			default:
-				return options.inverse(this);
-		}
-	},
 	getTZISOString: function(dateISO, offset){
 		// expects timezone offset as parameter - default: IST(Indian Standard Time) = (-330), default date will be new Date()
 		if(!dateISO)
@@ -195,7 +156,7 @@ var commonFunctions = {
 	},
 	sendMail: function(from, subject, mailingList, ccList, mailContent, callback){
 		var mailOptions = {
-			from: ((from || "Tabsales Dev Team") + ' <' + 'akhil16.4.93@gmail.com' + '>'), // sender address
+			from: ((from || "Tabsales Dev Team") + ' <' + 'talic.mobility@gmail.com' + '>'), // sender address
 			to: mailingList, // comma separated list or array of receivers
 			cc: ccList, // comma separated list or array of receivers
 			subject: (subject || 'Important Announcement!'),
@@ -319,8 +280,8 @@ var commonFunctions = {
 			}
 		});
 	},
-	purge: function(){
-		var cutoff = new Date();
+	purge: function(date){
+		var cutoff = date;
 		cutoff.setDate(cutoff.getDate()-10);
 		modelFunctions.purge(cutoff, commonFunctions.deleteFile);
 	},
@@ -331,8 +292,9 @@ var commonFunctions = {
 				cronTime: '00 00 00 * * 0-6',
 				onTick:  function() {
 					// every night at 00:00:00
-					console.log("purge job ticked at " + new Date());
-					commonFunctions.purge(new Date());
+					var _date = new Date();
+					console.log("purge job ticked at " + _date);
+					commonFunctions.purge(_date);
 				},
 				start: true,
 				timeZone: 'Asia/Kolkata'

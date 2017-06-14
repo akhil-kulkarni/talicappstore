@@ -7,7 +7,6 @@ var burstShortId = require('burst-short-id');
 
 var modelFunctions = {
 	getLoginModelCount: function(whereClause, callback){
-		//loginModel.find().exec(function (err, docs) {console.log(JSON.stringify(docs));});
 		loginModel.count(whereClause).exec(callback);
 	},
 	printAllFileRecords: function(){
@@ -152,11 +151,12 @@ var modelFunctions = {
 			if(err){
 				return callback(null);
 			}
+			console.log("latest file size print: " + JSON.stringify(file));
 			return callback(file.fileSize);
 		});
 	},
 	purge: function(cutoff, deleteFile){
-		console.log('in purge:' + new Date() + ' --cutoff: ' + cutoff);
+		console.log('in purge: ' + new Date() + ' --cutoff: ' + cutoff);
 		filesModel.find({fileUpdatedOn: {$lt: cutoff}, doNotDelete: false, isProduction: false},
 			function (err, fileList) {
 				if(err){
@@ -195,14 +195,17 @@ var modelFunctions = {
 		filesModel.update({_id: fileData._id}, {isDeleted: true, fileDeletedBy: userId, fileDeletedOn: new Date()}, callback);
 	},
 	getFileDataBasedOnShortUrl: function(shortId, __getDateTimeToSend, __getFileSizeReadable, callback){
+		console.log("shortId: " + shortId);
 		filesModel.findOne({"shortId": shortId, "isDeleted": false}, '_id fileName fileType filePath fileSize fileVersionNumber projectName projectDesc appVersionNumber fileCreatedBy fileUpdatedBy fileCreatedOn fileUpdatedOn changeLog dependencies totalDownloads lastDownloadedOn doNotDelete isProduction isDeleted fileDeletedOn', function(err, file){
 			if(err){
 				return callback(null, err);
 			}
 			if(!!file){
+				console.log("file: " + JSON.stringify(file));
 				file = modelFunctions.prepareFileData(file, __getDateTimeToSend, __getFileSizeReadable);
+				return callback(file);
 			}
-			return callback(file);
+			return callback(null);
 		});
 	},
 	getShortId: function(_id, callback){

@@ -23,7 +23,8 @@ var hbs = exphbs.create({
 	helpers: {
 		json: function(val){ return JSON.stringify(val);},
 		paddedInc: function(val){ var pi = parseInt(val) + 1; if(pi<10) return "0"+pi; else return pi+"";},
-		trclr: function(val){ return ((val%2===0)?"info":"active"); }
+		trclr: function(val){ return ((val%2===0)?"info":"active"); },
+		apphdrclr: function(val){ if(!!val){val = parseInt(val); return ("app-header-" + ((val%5)+1));} return "app-header-1";}
 	},
 	defaultLayout: 'main',
 	layoutsDir:  __dirname + '/views/layouts',
@@ -53,9 +54,9 @@ app.get('/', function(req, res) {
 		fileRes.loggedInAs = userSession.username || null;
 		fileRes.files = filesArr || null;
 		fileRes.isNotDownloadLink = true;
-		fileRes.pageName = "talic app store";
-		fileRes.isTalicAppStore = true;
-		res.render('TalicAppStore', {"file": fileRes});
+		fileRes.pageName = constants.defaultPageName;
+		fileRes.isAppStore = true;
+		res.render('appStore', {"file": fileRes});
 	});
 });
 
@@ -67,9 +68,9 @@ app.get('/prod', function(req, res) {
 		fileRes.loggedInAs = userSession.username || null;
 		fileRes.files = filesArr || null;
 		fileRes.isNotDownloadLink = true;
-		fileRes.pageName = "talic app store";
-		fileRes.isTalicAppStore = true;
-		res.render('TalicAppStore', {"file": fileRes});
+		fileRes.pageName = constants.defaultPageName;
+		fileRes.isAppStore = true;
+		res.render('appStore', {"file": fileRes});
 	});
 });
 
@@ -78,9 +79,9 @@ app.get('/downloads/:id', function(req, res) {
 		if (err) { throw(err); }
 		filesArr.files = ((!!filesArr)?[filesArr]:null);
 		filesArr.isNotDownloadLink = false;
-		filesArr.pageName = "talic app store";
-		fileRes.isTalicAppStore = true;
-		res.render('TalicAppStore', {"file": filesArr});
+		filesArr.pageName = constants.defaultPageName;
+		filesArr.isAppStore = true;
+		res.render('appStore', {"file": filesArr});
 	});
 });
 
@@ -90,13 +91,13 @@ app.get('/devConsole', function(req, res) {
 		var fileRes = {};
 		commonFunctions.getFileListWithMetaData(null, function(err, files){
 			if(!!err){
-				res.render('devConsole', {"file": {pageName: "developer console", loggedInAs: userSession.username, isNotDownloadLink: true, isTalicAppStore: false}});
+				res.render('devConsole', {"file": {pageName: "developer console", loggedInAs: userSession.username, isNotDownloadLink: true, isAppStore: false}});
 			}
 			else{
 				fileRes.loggedInAs = userSession.username;
 				fileRes.isNotDownloadLink = true;
 				fileRes.pageName = "developer console";
-				fileRes.isTalicAppStore = false;
+				fileRes.isAppStore = false;
 				fileRes.files = files;
 				res.render('devConsole', {"file": fileRes});
 			}
@@ -213,7 +214,7 @@ app.post('/upload', function(req, res) {
 
 app.get("/download", function(req, res){
 	var file = req.query;
-	console.log("req.body.filePath: " + JSON.stringify(req.query.filePath));
+	console.log("req.body: " + JSON.stringify(req.query));
 	if(!!file){
 		commonFunctions.updateFilesModel(JSON.parse(JSON.stringify(req.query)), true, false, function(err, msg){
 			if(!!err){

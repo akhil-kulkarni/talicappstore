@@ -1,0 +1,70 @@
+<link href="/css/appStore.css" rel="stylesheet">
+{{#if file}}
+{{> header }}
+<div class="container as-container">
+	<div class="row app-row">
+		{{#if file.files}}
+		{{#each file.files}}
+		<div class="col-sm-6 col-md-6 col-lg-6">
+			<div class="app-wrap">
+				<div class="app-header {{apphdrclr @index}}">
+					<div class="app-name">
+						{{projectName}}
+					</div>
+				</div>
+				<div class="app-details">
+					<p><b>Version No:</b> {{appVersionNumber}}</p>
+					<p><b>Project Description:</b> {{projectDesc}}</p>
+					<p><b>Size:</b> {{fileSize}}</p>
+					<p><b>Uploaded By:</b> {{#if fileUpdatedBy}} {{fileUpdatedBy}} {{else}} {{fileCreatedBy}}{{/if}}</p>
+					<p><b>Uploaded on:</b> {{#if fileUpdatedOn}} {{fileUpdatedOn}} {{else}} {{fileCreatedOn}}{{/if}}</p>
+					<p><b>Total Downloads:</b> {{totalDownloads}}</p>
+					<p><b>Last Downloaded On:</b> {{lastDownloadedOn}}</p>
+					<p><b>Release Date:</b> {{fileUpdatedOn}} </p>
+					<p><b>Release Note:</b> {{#if changeLog}}{{else}}Not avaliable{{/if}}</p>
+					{{#if changeLog}}
+					<ol>
+					{{#each changeLog}}
+						<li>{{this}}</li>
+					{{/each}}
+					</ol>
+					{{/if}}
+				</div>
+				<div class="app-form">
+					{{#if isapk}}
+					<form id={{_id}} name={{_id}} method="GET" enctype="multipart/form-data" action="/download" style="height: 32px;">
+						<input type="hidden" name="_id" value="{{_id}}"/>
+						<input type="hidden" name="filePath" value="{{filePath}}"/>
+						<div class="text-center">
+							<a class="btn android-icon" onclick="downloadFile('apk', this)"  style="color: white;">
+								<i class="fa fa-android fa-lg"></i>
+								Download for Android
+							</a>
+						</div>
+					</form>
+					{{else}}
+					<form id={{_id}}>
+						<input type="hidden" name="_id" value="{{_id}}"/>
+						<div class="text-center">
+							<a class="btn ios-icon" onclick="downloadFile('ipa', this)" href={{filePath}} style="color: white;">
+								<i class="fa fa-apple fa-lg"></i>
+								Download for iOS
+							</a>
+						</div>
+					</form>
+					{{/if}}
+				</div>
+			</div>
+		</div>
+		{{/each}}
+		{{else}}
+		<h4 class="no-files-msg">No files available to download!</h4>
+		{{/if}}
+	</div>
+</div>
+{{/if}}
+<script type="text/javascript" src="/js/crypto-js/core.js"></script>
+<script type="text/javascript" src="/js/crypto-js/sha256.js"></script>
+<script type="text/javascript" src="/js/crypto-js/hmac.js"></script>
+<script type="text/javascript" src="/js/crypto-js/pbkdf2.js"></script>
+<script type="text/javascript" src="/js/appStore.js"></script>

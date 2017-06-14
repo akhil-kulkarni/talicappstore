@@ -1,117 +1,69 @@
-<style>
-	select:-ms-expand {
-		display: none;
-	}
-	.select-wrap:after {
-		content: "\f107";
-		font-family: FontAwesome;
-		color: #000;
-		position: absolute; 
-		right: 5px; 
-		top: 35px;
-		z-index: 1;
-		width: 10%;
-		height: 100%;  
-		pointer-events: none;
-		font-size: 24px;
-		font-weight: 600;
-	}
-	@media only screen and (min-width: 600px) {
-		.sideMenuWrapper{
-			display: none;
-		}
-		.possibleSideMenu{
-			display: block !important;
-		}
-	}
-	.sideMenuWrapper{
-		cursor: pointer;
-	}
-	.sideMenuWrapper i{
-		color: white;
-		font-size: 24px;
-		padding: 13px 15px;
-	}
-	@media only screen and (max-width: 599px) {
-		.possibleSideMenu{
-			display: none;
-			background: #1a2c44;
-			height: 150px;
-			width: 100%;
-			position: fixed;
-			top: 50px;
-			left: 0px;
-			opacity: 0.96;
-		}
-		.possibleSideMenu div{
-			width: 100%;
-		}
-		.menuElement{
-			float: right;
-		}
-	}
-</style>
+<link href="/css/header.css" rel="stylesheet"/>
 <header>
-	<div style="width: 100%; background: #1a2c44; height: 50px; position: fixed; z-index: 5;">
-		<h4 style="margin: 0px; padding: 15px; float: left; font-family: sans-serif; color: white;">
+	<div class="hdr-wrapper">
+		<h4 class="hdr-left-content">
 			{{file.pageName}}
 		</h4>
 		{{#if file.isNotDownloadLink}}
-		<div style="float: right;">
+		<div class="hdr-right-content">
 			{{#if file.loggedInAs}}
 			<div id="sideMenuWrapper" class="sideMenuWrapper">
 				<i class="fa fa-bars sideMenuBurger" aria-hidden="true"></i>
-				<i class="fa fa-remove sideMenuCancel" aria-hidden="true" style="display: none;"></i>
+				<i class="fa fa-remove sideMenuCancel" aria-hidden="true"></i>
 			</div>
 			<div id="possibleSideMenu" class="possibleSideMenu">
-				{{#if file.isTalicAppStore}}
+				{{#if file.isAppStore}}
 				{{!-- dev console link --}}
-				<div style="float: left; padding: 12px; font-size: 16px;">
-					<a class="menuElement" style="text-decoration: none; color: white; padding: 10px auto;" href="/devConsole">dev console</a>
+				<div class="hdr-link-wrapper">
+					<a class="menuElement" href="/devConsole">dev console</a>
 				</div>
 				{{!-- admin console link --}}
-				<div style="float: left; padding: 12px; font-size: 16px; display: none;">
-					<a class="menuElement" style="text-decoration: none; color: white; padding: 10px auto;" href="/adminConsole">admin console</a>
+				<div class="hdr-link-wrapper hdr-admin-wrapper">
+					<a class="menuElement" href="/adminConsole">admin console</a>
 				</div>
 				{{else}}
 				{{!-- uat app store link --}}
-				<div style="float: left; padding: 12px; font-size: 16px;">
-					<a class="menuElement" style="text-decoration: none; color: white; padding: 10px auto;" href="/">uat app store</a>
+				<div class="hdr-link-wrapper">
+					<a class="menuElement" href="/">uat app store</a>
 				</div>
 				{{!-- prod app store link --}}
-				<div style="float: left; padding: 12px; font-size: 16px;">
-					<a class="menuElement" style="text-decoration: none; color: white; padding: 10px auto;" href="/prod">prod app store</a>
+				<div class="hdr-link-wrapper">
+					<a class="menuElement" href="/prod">prod app store</a>
 				</div>
 				{{/if}}
 				{{!-- Logout Button --}}
-				<div style="float: left; padding: 8px;">
-					<input id="logoutButton" class="btn btn-danger menuElement" type="submit" value="Logout" style="width: 100px;" onclick="logout()">
+				<div class="hdr-logout-btn-wrapper">
+					<input id="logoutButton" class="btn btn-danger menuElement" type="submit" value="Logout" onclick="logout()">
 				</div>
 			</div>
 			{{else}}
 			{{!-- Login Button --}}
-			<div style="float: left; padding: 8px;">
-				<input id="loginButton" class="btn btn-danger" type="submit" value="Login" style="width: 100px;" onclick="onLoginClick()">
+			<div class="hdr-login-btn-wrapper">
+				<input id="loginButton" class="btn btn-danger hdr-login-btn" type="submit" value="Login" onclick="onLoginClick()">
 			</div>
 			{{/if}}
 		</div>
 		{{/if}}
 	</div>
-	<div id="loginWrapper" style="display: none; position: fixed; top: 40px; right: 10px; width: 300px; height: 200px; opacity: 0.9; z-index: 2;">
-		<div style="position: relative; width: 0px; height: 0px; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 10px solid white; margin-left: 80%;">
-		</div>
-		<div style="position: relative; top: 0px; right: 0px; height: 100%; background: white; border-radius: 6px; border: 2px solid #1a2c44; border-top: none;">
-			<div style="padding: 10px;">
+	<div id="loginWrapper" class="login-wrapper">
+		<div class="login-top-triangle"></div>
+		<div class="login-form-wrapper">
+			<div class="login-form">
 				<div class="form-group">
 					<label>Username: </label>
-					<div class="select-wrap"><select id="username" type="text" class="form-control" style="appearance: none; -moz-appearance: none; -webkit-appearance: none;"><option value="dev" selected>developer</option><option value="admin">admin</option></select></div>
+					<div class="select-wrap">
+						<select id="username" type="text" class="form-control login-select">
+							<option value="dev" selected>developer</option>
+							<option value="admin">admin</option>
+						</select>
+					</div>
 				</div>
-				<div class="form-group" style="margin-bottom: 10px;">
+				<div class="form-group login-password-wrapper">
 					<label>Password: </label>
 					<input id="password" type="password" class="form-control"/>
 				</div>
 				<div class="form-group">
-					<input id="loginFormSubmit" class="btn btn-success" type="submit" value="Submit" onclick="loginFormSubmit()" style="width: 100px; margin: auto 90px;">
+					<input id="loginFormSubmit" class="btn btn-success login-submit-btn" type="submit" value="Submit" onclick="loginFormSubmit()">
 				</div>
 			</div>
 		</div>

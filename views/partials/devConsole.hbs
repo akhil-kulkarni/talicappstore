@@ -1,12 +1,13 @@
+<link href="/css/devConsole.css" rel="stylesheet">
 <link href="/css/jquery.fileupload.css" rel="stylesheet">
 <link href="/css/jquery.fileupload-ui.css" rel="stylesheet">
 {{> header }}
-<div class="container" style="top: 50px; position: absolute; width: 100%;">
-	<div class="products" style="margin: 30px auto; width: 98%;">
-		<div class="container-fluid" style="padding: 0px;">
-			<div class="row table-responsive" style="border: 1px solid #1a2c44; border-radius: 5px; margin: 0px;">
-				<table class="table" style="cursor: default;">
-					<thead style="background: #3276b1; color: #fff; cursor: default; font-weight: bold;">
+<div class="container dc-container">
+	<div class="dc-page-wrapper">
+		<div class="container-fluid dc-page">
+			<div class="row table-responsive dc-table-wrapper">
+				<table class="table dc-table">
+					<thead>
 						<tr>
 							<th>sr no.</th>
 							<th>file name</th>
@@ -23,7 +24,7 @@
 						{{#if file.files}}
 						{{#each file.files}}
 						<tr class="accordion-toggle {{trclr @index}}">
-							<td data-toggle="collapse" data-target="#file{{paddedInc @index}}" style="text-align: center;">{{paddedInc @index}}</td>
+							<td data-toggle="collapse" data-target="#file{{paddedInc @index}}" class="td-index">{{paddedInc @index}}</td>
 							<td data-toggle="collapse" data-target="#file{{paddedInc @index}}" >{{fileName}}</td>
 							<td data-toggle="collapse" data-target="#file{{paddedInc @index}}" >{{projectName}}</td>
 							<td data-toggle="collapse" data-target="#file{{paddedInc @index}}" >{{appVersionNumber}}</td>
@@ -31,13 +32,13 @@
 							<td data-toggle="collapse" data-target="#file{{paddedInc @index}}" >{{#if fileUpdatedOn}} {{fileUpdatedOn}} {{else}} {{fileCreatedOn}}{{/if}}</td>
 							<td data-toggle="collapse" data-target="#file{{paddedInc @index}}" >{{#if isProduction}} Yes {{else}} No {{/if}}</td>
 							<td data-toggle="collapse" data-target="#file{{paddedInc @index}}" >{{fileSize}}</td>
-							<td style="width: 105px;">
-								<div style="display: inline-block;">
+							<td class="td-action-btns">
+								<div>
 									<button type="button" class="btn btn-success btn-sm" onclick="updateBuild({{json this}})" title="update build">
 										<i class="fa fa-repeat"></i>
 									</button>
 								</div>
-								<div style="display: inline-block;">
+								<div>
 									<button type="button" class="btn btn-danger btn-sm" onclick="deleteBuild({{json this}})" title="delete build">
 										<i class="fa fa-remove"></i>
 									</button>
@@ -45,9 +46,9 @@
 							</td>
 						</tr>
 						<tr>
-							<td colspan="9" class="hiddenRow danger" style="padding: 0px; border-top: none;">
-								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 accordian-body collapse" id="file{{paddedInc @index}}" style="border-top: 1px solid #ddd;">
-									<div class="row" style="padding:10px;">
+							<td colspan="9" class="danger hiddenRow">
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 accordian-body collapse" id="file{{paddedInc @index}}">
+									<div class="row dc-padding-10">
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
 											<div><b>Project Name:</b> {{projectName}}</div>
 											<div><b>App Version No.:</b> {{appVersionNumber}}</div>
@@ -67,25 +68,25 @@
 											<div><b>Last Downloaded On:</b> {{#if lastDownloadedOn}} {{lastDownloadedOn}} {{else}} Never... hahaha {{/if}}</div>
 										</div>
 									</div>
-									<div class="row" style="padding:10px;">
+									<div class="row dc-padding-10">
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
 											<b>Project Description: </b>{{projectDesc}}
 										</div>
 									</div>
 									{{#if dependencies}}
-									<div class="row" style="padding:10px;">
+									<div class="row dc-padding-10">
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
 											<b>Dependencies: </b>
 										</div>
-										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding-top: 5px;">
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6 dc-padding-top-5">
 											<b>File Name: </b> {{dependencies.fileName}}
 										</div>
-										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6" style="padding-top: 5px;">
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6 dc-padding-top-5">
 											<b>File Purpose: </b> {{dependencies.filePurpose}}
 										</div>
 									</div>
 									{{/if}}
-									<div class="row" style="padding:10px;">
+									<div class="row dc-padding-10">
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
 											<b>Change Log: </b>{{#if changeLog}}{{else}}Not available{{/if}}
 										</div>
@@ -113,11 +114,10 @@
 					</tbody>
 				</table>
 			</div>
-
-			<div id="uploadBox" class="row" style="display: none; background: #dff0d8; border: 1px solid #1a2c44; margin: 30px auto; border-radius: 5px;">
+			<div id="uploadBox" class="row dc-upload-box">
 				<form id="uploadForm">
 					<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
-						<div class="row" style="padding: 10px;">
+						<div class="row dc-padding-10">
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 								<input type="text" id="uploaderName" placeholder="uploader name"/>
 							</div>
@@ -128,31 +128,34 @@
 								<input type="password" id="password" placeholder="password"/>
 							</div>
 						</div>
-						<div class="row" style="padding: 10px;">
+						<div class="row dc-padding-10">
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 								<input type="text" id="projectName" placeholder="project name *"/>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
-								<label style="margin-top: 5px;"><input type="checkbox" id="doNotDelete" style="height: 20px; width: 20px; padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;"/> do not delete</label>
+								<label class="dc-margin-top-5">
+									<input type="checkbox" id="doNotDelete" class="dc-upload-checkbox"/> do not delete
+								</label>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
-								<label style="margin-top: 5px;">
-								<input type="checkbox" id="isProduction" style="height: 20px; width: 20px; padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;"/> is production?</label>
+								<label class="dc-margin-top-5">
+									<input type="checkbox" id="isProduction" class="dc-upload-checkbox"/> is production?
+								</label>
 							</div>
 						</div>
-						<div class="row" style="padding: 10px;">
+						<div class="row dc-padding-10">
 							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-								<textarea id="projectDesc" placeholder="project description *" style="width: 100%; height: 50px;"></textarea>
+								<textarea id="projectDesc" placeholder="project description *" class="dc-ta-project-desc"></textarea>
 							</div>
 						</div>
-						<div class="row" style="padding: 10px;">
+						<div class="row dc-padding-10">
 							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-								<textarea id="changeLog" placeholder="changelog" style="width: 100%; height: 75px;"></textarea>
+								<textarea id="changeLog" placeholder="changelog" class="dc-ta-changelog"></textarea>
 							</div>
 						</div>
 					</div>
 					<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
-						<div class="row" style="padding: 10px;">
+						<div class="row dc-padding-10">
 							<input type="hidden" id="_id"/><input type="hidden" id="fileCreatedBy"/>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 								<span class="btn btn-success fileinput-button">
@@ -174,7 +177,7 @@
 								</button>
 							</div>
 						</div>
-						<div class="row upload-file" style="padding: 10px;">
+						<div class="row upload-file dc-padding-10">
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-6">
 								<p id="fileName" class="name">File Name</p>
 								<strong class="error text-danger"></strong>
@@ -188,15 +191,15 @@
 								</div>
 							</div>
 						</div>
-						<div class="row upload-file" style="padding: 10px;">
+						<div class="row upload-file dc-padding-10">
 							<input type="hidden" id="_retFileId"/>
 							<input type="hidden" id="retFileVersionNo"/>
 							<div class="col-xl-4 col-lg-5 col-md-4 col-sm-4 col-xs-6">
-								<label style="margin-top: 5px;">to: </label>
+								<label class="dc-margin-top-5">to: </label>
 								<input type="text" id="mailTo"/>
 							</div>
 							<div class="col-xl-4 col-lg-5 col-md-4 col-sm-4 col-xs-6">
-								<label style="margin-top: 5px;">cc: </label>
+								<label class="dc-margin-top-5">cc: </label>
 								<input type="text" id="mailCC"/>
 							</div>
 							<div class="col-xl-4 col-lg-2 col-md-4 col-sm-4 col-xs-6">
@@ -206,11 +209,11 @@
 								</button>
 							</div>
 						</div>
-						<div class="row upload-file" style="padding: 10px;">
-							<div style="font-size: 8pt; color:red">The mail ids should be separated using semi colon (;).</div>
+						<div class="row upload-file dc-padding-10">
+							<div class="dc-mail-note">The mail ids should be separated using semi colon (;).</div>
 						</div>
-						<div class="row upload-file" style="padding: 10px;">
-							<div style="font-size: 8pt; color:red">* if <b> do not delete </b> is unchecked then the file will be automatically deleted after <b>10 days</b>.</div>
+						<div class="row upload-file dc-padding-10">
+							<div class="dc-mail-note">* if <b> do not delete </b> is unchecked then the file will be automatically deleted after <b>10 days</b>.</div>
 						</div>
 					</div>
 				</form>
@@ -221,6 +224,6 @@
 		</div>
 	</div>
 </div>
-<script src="/js/jquery.ui.widget.js"></script>
-<script src="/js/jquery.fileupload.js"></script>
+<script src="/js/jquery/jquery.ui.widget.js"></script>
+<script src="/js/jquery/jquery.fileupload.js"></script>
 <script type="text/javascript" src="/js/devConsole.js"></script>
