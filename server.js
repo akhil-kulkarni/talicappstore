@@ -214,22 +214,26 @@ app.post('/upload', function(req, res) {
 
 app.get("/download", function(req, res){
 	var file = req.query;
-	console.log("req.body: " + JSON.stringify(req.query));
-	if(!!file){
-		commonFunctions.updateFilesModel(JSON.parse(JSON.stringify(req.query)), true, false, function(err, msg){
+	console.log("download file request: " + JSON.stringify(file));
+	if(!!file && !!file._id){
+		commonFunctions.updateFilesModel(JSON.parse(JSON.stringify(file)), true, false, function(err, msg){
 			if(!!err){
 				console.log("error updating download file details: " + err);
 				res.json({"success": false, "err": "Unable to download file!"});
 			}
 			else{
-				if(!req.query.isipa){
-					commonFunctions.downloadFile(req.query.filePath, req.query._id, res);
+				if(!file.isipa){
+					commonFunctions.downloadFile(file.filePath, file._id, res);
 				}
 				else{
 					res.json({"success": true});
 				}
 			}
 		});
+	}
+	else{
+		console.log("file id not provided!");
+		res.json({"success": false, "err": "Unable to download file!"});
 	}
 });
 

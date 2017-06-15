@@ -23,22 +23,24 @@ var modelFunctions = {
 						if(err){
 							return callback(err);
 						}
-						fileData.totalDownloads = (file.totalDownloads + 1);
-						fileData.lastDownloadedOn = new Date();
-						fileData.changeLog = file.changeLog;
-						for(var i=0; i<fileData.changeLog.length; i++){
-							if(fileData.changeLog[i].fileVersionNumber == file.fileVersionNumber){
-								fileData.changeLog[i].totalDownloads = fileData.totalDownloads;
-								fileData.changeLog[i].lastDownloadedOn = fileData.lastDownloadedOn;
-								break;
+						else{
+							fileData.totalDownloads = (file.totalDownloads + 1);
+							fileData.lastDownloadedOn = new Date();
+							fileData.changeLog = file.changeLog;
+							for(var i=0; i<fileData.changeLog.length; i++){
+								if(fileData.changeLog[i].fileVersionNumber == file.fileVersionNumber){
+									fileData.changeLog[i].totalDownloads = fileData.totalDownloads;
+									fileData.changeLog[i].lastDownloadedOn = fileData.lastDownloadedOn;
+									break;
+								}
 							}
+							filesModel.update({_id: fileData._id}, fileData, function(err){
+								if(!!err){
+									return callback(err);
+								}
+								return callback(null, {_id: fileData._id, fileVersionNumber: fileData.fileVersionNumber});
+							});
 						}
-						filesModel.update({_id: fileData._id}, fileData, function(err){
-							if(!!err){
-								return callback(err);
-							}
-							return callback(null, {_id: fileData._id, fileVersionNumber: fileData.fileVersionNumber});
-						});
 					});
 				}
 				else {
@@ -46,26 +48,28 @@ var modelFunctions = {
 						if(err){
 							return callback(err);
 						}
-						if(!isPlistUpdate){
-							console.log("in findOne: " + file.fileVersionNumber);
-							var fileVersionNumber = file.fileVersionNumber;
-							fileData.fileVersionNumber = ++fileVersionNumber;
-							var changeLog = fileData.changeLog;
-							var fileChangeLog = JSON.parse(JSON.stringify(file.changeLog));
-							console.log("final changelog: " + fileChangeLog);
-							fileChangeLog.push({fileVersionNumber: fileData.fileVersionNumber, changeLog: changeLog});
-							fileData.changeLog = fileChangeLog;
-							if(!!file.fileCreatedOn)
-								fileData.fileUpdatedOn = new Date();
-							console.log("\n\nfile.fileCreatedOn: " + file.fileCreatedOn);
-							console.log("fileData.fileUpdatedOn: " + fileData.fileUpdatedOn);
-						}
-						filesModel.update({_id: fileData._id}, fileData, function(err){
-							if(!!err){
-								return callback(err);
+						else{
+							if(!isPlistUpdate){
+								console.log("in findOne: " + file.fileVersionNumber);
+								var fileVersionNumber = file.fileVersionNumber;
+								fileData.fileVersionNumber = ++fileVersionNumber;
+								var changeLog = fileData.changeLog;
+								var fileChangeLog = JSON.parse(JSON.stringify(file.changeLog));
+								console.log("final changelog: " + fileChangeLog);
+								fileChangeLog.push({fileVersionNumber: fileData.fileVersionNumber, changeLog: changeLog});
+								fileData.changeLog = fileChangeLog;
+								if(!!file.fileCreatedOn)
+									fileData.fileUpdatedOn = new Date();
+								console.log("\n\nfile.fileCreatedOn: " + file.fileCreatedOn);
+								console.log("fileData.fileUpdatedOn: " + fileData.fileUpdatedOn);
 							}
-							return callback(null, {_id: fileData._id, fileVersionNumber: fileData.fileVersionNumber});
-						});
+							filesModel.update({_id: fileData._id}, fileData, function(err){
+								if(!!err){
+									return callback(err);
+								}
+								return callback(null, {_id: fileData._id, fileVersionNumber: fileData.fileVersionNumber});
+							});
+						}
 					});
 				}
 			}

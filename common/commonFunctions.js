@@ -72,7 +72,7 @@ var commonFunctions = {
 		}
 	},
 	updateFilesModel: function(fileData, isDownload, isPlistUpdate, callback){
-		if(!!fileData){
+		if(!!fileData && !!fileData._id){
 			if(!!isDownload && ("filePath" in fileData)){
 				// delete fileData.filePath so as to not overwrite path during download
 				delete fileData.filePath;
