@@ -379,9 +379,6 @@ var commonFunctions = {
 							return callback({"mailContent": uploadMailTemplate, "subject": "New build: " + projectName});
 						});
 					});
-					
-
-					
 				});
 			}
 			else if(!projectName){

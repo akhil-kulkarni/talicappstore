@@ -42,16 +42,16 @@ $(document).on("click", "#sideMenuWrapper", function(){
 });
 
 $(document).mouseup(function (e) {
-    var container = $("#loginWrapper");
-    if ((!container.is(e.target)) && (container.has(e.target).length === 0) && (!$("#loginButton").is(e.target))) {
-        container.hide();
+	var container = $("#loginWrapper");
+	if ((!container.is(e.target)) && (container.has(e.target).length === 0) && (!$("#loginButton").is(e.target))) {
+		container.hide();
 		$("#loginButton").prop("value", "Login");
-    }
+	}
 
 	var possibleSideMenu = $("#possibleSideMenu");
-    if ((!possibleSideMenu.is(e.target)) && (possibleSideMenu.has(e.target).length === 0) && (!$("#sideMenuWrapper").is(e.target)) && ($("#sideMenuWrapper").has(e.target).length === 0) && ($("#sideMenuWrapper").css("display")!=="none")) {
-        possibleSideMenu.hide();
+	if ((!possibleSideMenu.is(e.target)) && (possibleSideMenu.has(e.target).length === 0) && (!$("#sideMenuWrapper").is(e.target)) && ($("#sideMenuWrapper").has(e.target).length === 0) && ($("#sideMenuWrapper").css("display")!=="none")) {
+		possibleSideMenu.hide();
 		$(".sideMenuBurger").show();
 		$(".sideMenuCancel").hide();
-    }
+	}
 });
