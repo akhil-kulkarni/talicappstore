@@ -13,9 +13,9 @@ var constants = {
 	oAuth2Config: {
 		//type: 'OAuth2',
 		user: "talic.mobility@gmail.com",
-		clientId: "971867477238-9n38eht7kq0mnko1viu59l2cvtnsvlqv.apps.googleusercontent.com",
-		clientSecret: "Q9RhvyZr8FkKPamLisPensA9",
-		refreshToken: "1/de33HJ_EGMj1YlZlEMXS3gSX9g7F-I7lv1CWekb-KNM"
+		clientId: "971867477238-2fr7ubdq3r5f3testvqcajcpdr43ba9q.apps.googleusercontent.com",
+		clientSecret: "Tw9fwzzwuPeezoREx455ax_t",
+		refreshToken: "1/9jSgUbvAs3do7ODq0DiiKOXLph4i--2daIK7zh7zyT4"
 	},
 
 	plistTemplate: '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict><key>items</key><array><dict><key>assets</key><array><dict><key>kind</key><string>software-package</string><key>url</key><string>||URL||</string></dict></array><key>metadata</key><dict><key>bundle-identifier</key><string>||BUNDLE_IDENTIFIER||</string><key>kind</key><string>software</string><key>title</key><string>||TITLE||</string><key>version</key><string>||VERSION_NO||</string></dict></dict></array></dict></plist>',
